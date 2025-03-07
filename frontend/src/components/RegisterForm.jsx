@@ -1,60 +1,62 @@
-import { useEffect, useState } from "react";
-import { Form, Button, Container } from "react-bootstrap";
+import React from "react";
 
-export default function RegisterForm() {
-  const [formData, setFormData] = useState({});
-  const [values, setValues] = useState({});
-  const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/register/")
-      .then((res) => res.json())
-      .then((data) => {
-        setFormData(data.fields);
-        setValues(Object.fromEntries(Object.keys(data.fields).map((key) => [key, ""])));
-      });
-  }, []);
-
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const response = await fetch("http://127.0.0.1:8000/api/register/", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(values),
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      alert(data.message);
-      setValues(Object.fromEntries(Object.keys(formData).map((key) => [key, ""])));
-    } else {
-      setErrors(data.errors);
-    }
-  };
-
+const RegisterForm = ({ switchToLogin }) => {
   return (
-    <Container>
-      <h2 className="text-center">Registro</h2>
-      <Form onSubmit={handleSubmit}>
-        {Object.keys(formData).map((field) => (
-          <Form.Group key={field} className="mb-3">
-            <Form.Label>{formData[field]}</Form.Label>
-            <Form.Control
-              type={field.includes("password") ? "password" : "text"}
-              name={field}
-              value={values[field]}
-              onChange={handleChange}
-              placeholder={`Ingrese ${formData[field]}`}
+    <div className="flex justify-center items-center">
+      <div className="w-full max-w-xs">
+        <form className="rounded-2xl py-4 mb-4">
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+              Nombre de usuario
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="username"
+              type="text"
+              placeholder="Nombre de usuario"
             />
-            {errors[field] && <p className="text-danger">{errors[field]}</p>}
-          </Form.Group>
-        ))}
-        <Button variant="primary" type="submit">Registrarse</Button>
-      </Form>
-    </Container>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+              Correo electrónico
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="email"
+              type="email"
+              placeholder="Correo electrónico"
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+              Contraseña
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              id="password"
+              type="password"
+              placeholder="Contraseña"
+            />
+          </div>
+          <button className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition">
+            Registrarse
+          </button>
+
+          <div className="flex flex-col mt-8">
+            <p className="text-center text-sm">
+              ¿Ya tienes una cuenta?{" "}
+              <button
+                className="text-blue-500 hover:text-blue-800 cursor-pointer"
+                onClick={switchToLogin} // 🔹 Regresa al Login sin cerrar el modal
+              >
+                Inicia sesión
+              </button>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
   );
-}
+};
+
+export default RegisterForm;
