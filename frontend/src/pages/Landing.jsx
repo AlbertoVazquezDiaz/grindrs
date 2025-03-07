@@ -1,14 +1,15 @@
 import React from "react";
 import Slider from "../components/Slider";
-import { Container } from "react-bootstrap";
+import Sidebar from "../components/Sidebar";
 
 const Landing = () => {
   return (
     <>
       <Slider />
-      <Container>
+      <div className="flex">
+        <Sidebar />
         
-      </Container>
+      </div>
     </>
   );
 };

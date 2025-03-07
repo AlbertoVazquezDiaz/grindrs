@@ -1,6 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import { Navbar, Container, Nav } from "react-bootstrap";
-import Menu from "./components/Menu";
+import Menu from "./components/Megamenu";
 
 export default function App() {
   return (

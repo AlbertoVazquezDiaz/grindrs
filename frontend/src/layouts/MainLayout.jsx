@@ -1,15 +1,14 @@
-import Menu from "../components/Menu";
+import Menu from "../components/Megamenu";
 import { Outlet } from "react-router-dom";
-import { Container } from "react-bootstrap";
 
 
 const MainLayout = () => {
   return (
     <>
       <Menu />
-      <Container fluid className="p-0">
+      <div className="container mx-auto p-0">
         <Outlet /> {/* Renderiza la página actual */}
-      </Container>
+      </div>
     </>
   );
 };
