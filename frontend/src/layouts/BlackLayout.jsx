@@ -1,18 +1,15 @@
-import Footer from "../components/Footer";
 import Menu from "../components/Megamenu";
 import { Outlet } from "react-router-dom";
 
-
-const MainLayout = () => {
+const BlackLayout = () => {
   return (
-    <>
+    <div className="w-full min-h-screen bg-black">
       <Menu />
-      <div className="w-screen h-full bg-black">
+      <div className="w-full min-h-screen bg-black">
         <Outlet /> {/* Renderiza la página actual */}
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 
-export default MainLayout;
+export default BlackLayout;

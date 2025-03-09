@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  ShoppingBagIcon,
+} from "@heroicons/react/24/outline";
 import LoginModal from "./LoginModal"; // Importa el modal de login
 
-const navigation = [
+const initialNavigation = [
   { name: "Inicio", href: "/", current: true },
   { name: "Builder", href: "#", current: false },
-  { name: "Contáctanos", href: "#", current: false },
-  { name: "Registro", action: "openRegisterModal", current: false }, // Ahora abre el modal en modo Registro
+  { name: "Contáctanos", href: "/contact", current: false },
+  { name: "Registrarme", action: "openRegisterModal", current: false }, // Ahora abre el modal en modo Registro
   { name: "Iniciar sesión", action: "openLoginModal", current: false }, // Sigue abriendo el modal en modo Login
 ];
 
@@ -22,17 +27,33 @@ function classNames(...classes) {
 const Megamenu = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false); // Nuevo estado para alternar entre Login y Registro
+  const [navigation, setNavigation] = useState(initialNavigation);
+  const location = useLocation();
+
+  useEffect(() => {
+    const updatedNavigation = initialNavigation.map((item) => ({
+      ...item,
+      current: item.href === location.pathname,
+    }));
+    setNavigation(updatedNavigation);
+  }, [location]);
 
   return (
     <>
-      <Disclosure as="nav" className="bg-gray-800">
+      <Disclosure as="nav" className="bg-black">
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             {/* Botón del menú móvil */}
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
               <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset">
-                <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
-                <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
+                <Bars3Icon
+                  aria-hidden="true"
+                  className="block size-6 group-data-open:hidden"
+                />
+                <XMarkIcon
+                  aria-hidden="true"
+                  className="hidden size-6 group-data-open:block"
+                />
               </DisclosureButton>
             </div>
 
@@ -41,51 +62,61 @@ const Megamenu = () => {
               <div className="flex shrink-0 items-center">
                 <img
                   alt="Grindrs logo"
-                  src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                  className="h-8 w-auto"
+                  src="/grindr.svg"
+                  className="h-10 w-auto"
                 />
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
-                  {navigation.map((item) =>
-                    item.action === "openLoginModal" ? (
-                      <button
-                        key={item.name}
-                        onClick={() => {
-                          setIsRegisterMode(false);
-                          setIsModalOpen(true);
-                        }}
-                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                      >
-                        {item.name}
-                      </button>
-                    ) : item.action === "openRegisterModal" ? (
-                      <button
-                        key={item.name}
-                        onClick={() => {
-                          setIsRegisterMode(true);
-                          setIsModalOpen(true);
-                        }}
-                        className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"
-                      >
-                        {item.name}
-                      </button>
-                    ) : (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        className={classNames(
-                          item.current
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "rounded-md px-3 py-2 text-sm font-medium"
-                        )}
-                      >
-                        {item.name}
-                      </a>
-                    )
-                  )}
+                  {navigation.slice(0, 3).map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className={classNames(
+                        item.current
+                          ? " text-yellow-400"
+                          : "text-gray-300 hover:text-yellow-400",
+                        "rounded-md px-3 py-2 text-sm font-medium"
+                      )}
+                    >
+                      {item.name}
+                    </a>
+                  ))}
                 </div>
+              </div>
+            </div>
+
+            {/* Enlaces a la derecha */}
+            <div className="hidden sm:ml-6 sm:block ml-auto">
+              <div className="flex items-center space-x-4 ">
+                {navigation.slice(3).map((item) =>
+                  item.action === "openLoginModal" ? (
+                    <button
+                      key={item.name}
+                      onClick={() => {
+                        setIsRegisterMode(false);
+                        setIsModalOpen(true);
+                      }}
+                      className="text-gray-300 hover:text-yellow-400 rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
+                    >
+                      {item.name}
+                    </button>
+                  ) : item.action === "openRegisterModal" ? (
+                    <button
+                      key={item.name}
+                      onClick={() => {
+                        setIsRegisterMode(true);
+                        setIsModalOpen(true);
+                      }}
+                      className="text-gray-300 hover:text-yellow-400 rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
+                    >
+                      {item.name}
+                    </button>
+                  ) : null
+                )}
+                <button className="text-gray-300 hover:text-yellow-400 rounded-md px-3 py-2 text-sm font-medium cursor-pointer">
+                  <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
               </div>
             </div>
           </div>
