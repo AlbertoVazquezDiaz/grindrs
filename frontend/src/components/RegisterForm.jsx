@@ -82,7 +82,7 @@ const RegisterForm = ({ switchToLogin }) => {
           </button>
 
           <div className="flex flex-col mt-8">
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-gray-300">
               ¿Ya tienes una cuenta?{" "}
               <button
                 className="text-yellow-400 hover:text-yellow-500 cursor-pointer"

@@ -14,9 +14,9 @@ const LoginModal = ({ isOpen, closeModal, isRegister }) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeModal}>
-        <div className="fixed inset-0 bg-black/60" />
+        <div className="fixed inset-0 bg-black/70" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md bg-black rounded-lg shadow-lg p-6">
+          <Dialog.Panel className="w-full max-w-md bg-black border-1 border-yellow-400/50 rounded-lg shadow-lg p-6">
             <Dialog.Title className="text-xl text-center py-4 font-semibold text-white">
               {currentView === "register" ? "Regístrate" : "Iniciar sesión"}
             </Dialog.Title>

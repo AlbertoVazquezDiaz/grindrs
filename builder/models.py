@@ -3,14 +3,7 @@ from django.db import models
 
 class Rol(models.Model):
     nmRol = models.CharField(max_length=45, null=False)
-
-class Usuario(models.Model):
-    nombre = models.CharField(max_length=200 null=False)
-    correo = models.CharField(max_length=200 null=False)
-    contra = models.CharField(max_length=200 null=False)
-    toke = models
-
-
+    
 class Usuario(models.Model):
     nombre = models.CharField(max_length=100, null=False)
     apellidos = models.CharField(max_length=100, null=False)

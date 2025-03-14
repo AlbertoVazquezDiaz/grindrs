@@ -7,7 +7,7 @@ const MainLayout = () => {
   return (
     <>
       <Menu />
-      <div className="w-screen h-full bg-black">
+      <div className="max-w-fit overflow-x-hidden h-full bg-black">
         <Outlet /> {/* Renderiza la página actual */}
       </div>
       <Footer />

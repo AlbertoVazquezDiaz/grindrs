@@ -38,10 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'builder',
-    'payments',
-    'components',
-    'orders',
-    'users',
     'rest_framework_simplejwt',
 ]
 
@@ -89,7 +85,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nombre_tu_base_de_datos',
+        'NAME': 'saveco',
         'USER': 'root',
         'PASSWORD': 'root',
         'PORT': '3306',

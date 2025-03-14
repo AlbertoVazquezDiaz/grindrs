@@ -5,16 +5,16 @@ const ProductCard = ({ product }) => {
   return (
     <Link
       to={`/product/${product.id}`}
-      className="flex justify-end text-nowrap"
+      className="flex justify-end text-nowrap group"
     >
-      <div className="shadow-sm bg-[#292929] rounded-lg overflow-hidden hover:shadow-md transition duration-300 ease-in-out hover:shadow-yellow-500">
+      <div className="bg-[#292929] w-64 rounded-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-yellow-500 relative">
         <img
           src={product.image}
           alt={product.name}
           className="w-full h-48 object-cover"
         />
         <div className="p-4">
-          <h3 className="text-xl font-semibold text-gray-100">
+          <h3 className="text-xl font-semibold text-gray-100 text-wrap">
             {product.name}
           </h3>
           <p className="text-gray-400 mt-4 text-wrap">{product.description}</p>
@@ -27,11 +27,11 @@ const ProductCard = ({ product }) => {
           <CheckIcon className="w-5 h-5 self-center ml-2" />
         </div>
         <div className="flex justify-end text-black text-sm font-medium p-2 my-2">
-          <button className="bg-[#FFBB00] hover:bg-yellow-500 px-8 py-2 rounded-full cursor-pointer flex items-center justify-center">
-            <ShoppingCartIcon className="w-5 h-5 self-center me-2" />
-            Comprar
+          <button className="bg-[#FFBB00] hover:bg-yellow-500 px-4 py-2 rounded-full cursor-pointer flex items-center justify-center sm:justify-start">
+            <ShoppingCartIcon className="w-5 h-5 self-center" />
           </button>
         </div>
+        <div className="absolute bottom-0 left-1/2 w-0 h-1 bg-yellow-500 transition-all duration-300 ease-in-out group-hover:w-full group-hover:left-0"></div>
       </div>
     </Link>
   );

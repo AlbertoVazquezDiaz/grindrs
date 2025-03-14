@@ -38,7 +38,7 @@ const LoginForms = ({ switchToRegister }) => {
           </button>
 
           <div className="flex flex-col mt-8">
-            <p className="text-center text-sm text-gray-400">
+            <p className="text-center text-sm text-gray-300">
               ¿No tienes una cuenta?{" "}
               <button
                 className="text-yellow-400 hover:text-yellow-500 cursor-pointer"
