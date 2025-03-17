@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-_!n2qnkfk+d3a=gnc6fljr5+li58^bda8xq=nrpao-*v)o(1xg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,11 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'builder',
-    'payments',
-    'components',
-    'orders',
-    'users',
-    'rest_framework_simplejwt',
 ]
 
 REST_FRAMEWORK = {
@@ -89,11 +85,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nombre_tu_base_de_datos',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'julianes_siveco',
+        'USER': 'julianes_julian',
+        'PASSWORD': 'g3g6x$5dmrq1',
         'PORT': '3306',
-        'HOST': 'localhost',
+        'HOST': '66.29.156.11',
     }
 }
 
@@ -141,3 +137,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'builder.Usuario'
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Duración del token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
