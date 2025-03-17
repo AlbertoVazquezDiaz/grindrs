@@ -7,13 +7,13 @@ const LoginForms = ({ switchToRegister }) => {
         <form className="rounded-2xl py-4 mb-4">
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-white text-sm font-regular mb-2"
               htmlFor="email"
             >
               Correo electrónico
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               id="email"
               type="email"
               placeholder="Correo electrónico"
@@ -21,40 +21,40 @@ const LoginForms = ({ switchToRegister }) => {
           </div>
           <div className="mb-6">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-white text-sm mb-2"
               htmlFor="password"
             >
               Contraseña
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               id="password"
               type="password"
               placeholder="Contraseña"
             />
           </div>
-          <button className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition">
-            Iniciar sesión
+          <button className="w-full bg-[#ffbb00] text-black text-sm py-3 font-bold px-4 rounded-sm hover:text-black/80 transition cursor-pointer">
+            INICIAR SESIÓN
           </button>
 
           <div className="flex flex-col mt-8">
-            <p className="text-center text-sm">
+            <p className="text-center text-sm text-gray-300">
               ¿No tienes una cuenta?{" "}
               <button
-                className="text-blue-500 hover:text-blue-800 cursor-pointer"
+                className="text-yellow-400 hover:text-yellow-500 cursor-pointer"
                 onClick={switchToRegister} // 🔹 Cambia a Registro sin cerrar el modal
               >
                 Regístrate
               </button>
             </p>
             <div className="flex items-center justify-center mt-4">
-              <hr className="w-1/4" />
+              <hr className="w-1/4 text-white" />
               <p className="mx-4 text-sm text-gray-500">O</p>
-              <hr className="w-1/4" />
+              <hr className="w-1/4 text-white" />
             </div>
             <p className="text-center text-sm mt-8">
               <a
-                className="text-blue-500 hover:text-blue-800"
+                className="text-yellow-400 hover:text-yellow-500"
                 href="/auth/forgot-password"
               >
                 ¿Olvidaste tu contraseña?

@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 class Rol(models.Model):
     nmRol = models.CharField(max_length=45, null=False)
-
+    
 class UsuarioManager(BaseUserManager):
     
     def create_user(self, correo, nombre, apellidos, contraseña=None, **extra_fields):

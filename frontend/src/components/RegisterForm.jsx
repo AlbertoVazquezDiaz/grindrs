@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
 const RegisterForm = ({ switchToLogin }) => {
@@ -6,48 +7,86 @@ const RegisterForm = ({ switchToLogin }) => {
       <div className="w-full max-w-xs">
         <form className="rounded-2xl py-4 mb-4">
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Nombre de usuario
+            <label
+              className="block text-white text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              Nombre
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               id="username"
               type="text"
-              placeholder="Nombre de usuario"
+              placeholder="Nombre(s)"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+            <label
+              className="block text-white text-sm font-bold mb-2"
+              htmlFor="username"
+            >
+              Apellidos
+            </label>
+            <input
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
+              id="username"
+              type="text"
+              placeholder="Apellido"
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="block text-white text-sm font-bold mb-2"
+              htmlFor="email"
+            >
               Correo electrónico
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               id="email"
               type="email"
               placeholder="Correo electrónico"
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <label
+              className="block text-white text-sm font-bold mb-2"
+              htmlFor="password"
+            >
               Contraseña
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               id="password"
               type="password"
               placeholder="Contraseña"
             />
           </div>
-          <button className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition">
-            Registrarse
+          <div className="mb-6">
+            <label
+              className="block text-white text-sm font-bold mb-2"
+              htmlFor="password"
+            >
+              Confirmar contraseña
+            </label>
+            <input
+              className="mt-1 block w-full border-b  shadow-sm  text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
+              id="password"
+              type="password"
+              placeholder="Confirmar contraseña"
+            />
+          </div>
+          <button className="w-full flex items-center justify-center bg-[#ffbb00] text-black text-sm py-4 font-bold px-4 rounded-sm hover:text-black/80 transition cursor-pointer">
+            REGISTRARME
+            <ChevronRightIcon className="w-4 h-4 ml-2 self-center" />
           </button>
 
           <div className="flex flex-col mt-8">
-            <p className="text-center text-sm">
+            <p className="text-center text-sm text-gray-300">
               ¿Ya tienes una cuenta?{" "}
               <button
-                className="text-blue-500 hover:text-blue-800 cursor-pointer"
-                onClick={switchToLogin} // 🔹 Regresa al Login sin cerrar el modal
+                className="text-yellow-400 hover:text-yellow-500 cursor-pointer"
+                onClick={switchToLogin}
               >
                 Inicia sesión
               </button>

@@ -4,6 +4,7 @@ import django.db.models.deletion
 from django.db import migrations, models
 
 
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -74,6 +75,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='componentes', to='builder.tipocomponente'),
         ),
         migrations.CreateModel(
+
             name='Usuario',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -90,6 +92,7 @@ class Migration(migrations.Migration):
             name='usuario',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='builder.usuario'),
         ),
+
         migrations.CreateModel(
             name='Venta',
             fields=[
