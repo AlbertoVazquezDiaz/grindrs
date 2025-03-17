@@ -1,0 +1,8 @@
+#DEPENDENCIAS:
+
+#djangorestframework:
+    #pip install djangorestframework
+
+#INSTALACION:
+
+#pip install djangorestframework-simplejwt
