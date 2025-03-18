@@ -115,7 +115,7 @@ const Landing = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl text-gray-100 font-bold">Productos</h1>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 mt-4">
             {products.map((product, index) => (
               <ProductCard key={index} product={product} />
             ))}
