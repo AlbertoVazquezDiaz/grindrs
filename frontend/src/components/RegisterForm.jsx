@@ -1,11 +1,33 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useState } from "react";
+import api from "../API/axiosConfig";
 
 const RegisterForm = ({ switchToLogin }) => {
+  const [name, setName] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const response = await api.post("usuario/", {
+          name, lastname, email, password
+      })
+      console.log("Registro exitoso", response.data);
+
+    } catch (error) {
+      console.error("Error al registrar", error.response.data);
+      setError(error.response ? error.response.data.message : error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center">
       <div className="w-full max-w-xs">
-        <form className="rounded-2xl py-4 mb-4">
+        <form className="rounded-2xl py-4 mb-4" onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
               className="block text-white text-sm font-bold mb-2"
@@ -18,6 +40,7 @@ const RegisterForm = ({ switchToLogin }) => {
               id="username"
               type="text"
               placeholder="Nombre(s)"
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="mb-4">
@@ -32,6 +55,7 @@ const RegisterForm = ({ switchToLogin }) => {
               id="username"
               type="text"
               placeholder="Apellido"
+              onChange={(e) => setLastname(e.target.value)}
             />
           </div>
           <div className="mb-4">
@@ -46,6 +70,7 @@ const RegisterForm = ({ switchToLogin }) => {
               id="email"
               type="email"
               placeholder="Correo electrónico"
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-6">
@@ -60,6 +85,7 @@ const RegisterForm = ({ switchToLogin }) => {
               id="password"
               type="password"
               placeholder="Contraseña"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="mb-6">
@@ -76,6 +102,9 @@ const RegisterForm = ({ switchToLogin }) => {
               placeholder="Confirmar contraseña"
             />
           </div>
+          {error && (
+            <div className="text-red-500 text-sm mb-4 text-center">{error}</div>
+          )}
           <button className="w-full flex items-center justify-center bg-[#ffbb00] text-black text-sm py-4 font-bold px-4 rounded-sm hover:text-black/80 transition cursor-pointer">
             REGISTRARME
             <ChevronRightIcon className="w-4 h-4 ml-2 self-center" />
