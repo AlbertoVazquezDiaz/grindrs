@@ -37,7 +37,7 @@ class LoginJWTView(APIView):
         correo = request.data.get("correo")
         password = request.data.get("password")
 
-        user = authenticate(username=correo, password=password)
+        user = authenticate(correo=correo, password=password)
         
         if user:
             refresh = RefreshToken.for_user(user)
@@ -49,3 +49,39 @@ class LoginJWTView(APIView):
             })
         else:
             return Response({"error": "Credenciales inválidas."}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class RegistroCompatibilidadView(APIView):
+    def post(self, request):
+        serializer = multipleCompatibilidadSerializer(data = request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Compatibilidades registrada correctamente"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ComputadoraCreateView(APIView):
+    def post(self, request):
+        serializer = ComputadoraSerializer(data=request.data)
+
+        if serializer.is_valid():
+            computadora = serializer.save()
+            return Response({
+                "message": "Computadora creada exitosamente",
+                "computadoira_id": computadora.id
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class VentaCreteView(APIView):
+    def post(self, request):
+        serializer = VentaSerializer(data=request.data)
+
+        if serializer.is_valid():
+            venta = serializer.save()
+            return Response({
+                "message": "Venta creada exitosamente",
+                "venta_id": venta.id
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

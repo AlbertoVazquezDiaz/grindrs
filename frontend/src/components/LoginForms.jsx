@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import api from "../API/axiosConfig";
 
 const LoginForms = ({ switchToRegister }) => {
-  const [email, setEmail] = useState("");
+  const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -11,9 +11,9 @@ const LoginForms = ({ switchToRegister }) => {
     setError("");
     try {
       // 🔹 Lógica de inicio de sesión
-      console.log(email, password)
+      console.log(correo, password)
       const response = await api.post("login/", {
-         email, password 
+         correo, password 
       });
       console.log("Inicio de sesión exitoso", response.data);
     }
@@ -40,7 +40,7 @@ const LoginForms = ({ switchToRegister }) => {
               id="email"
               type="email"
               placeholder="Correo electrónico"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setCorreo(e.target.value)}
             />
           </div>
           <div className="mb-6">
