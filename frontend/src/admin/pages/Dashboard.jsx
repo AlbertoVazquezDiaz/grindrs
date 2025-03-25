@@ -9,9 +9,9 @@ import {
 
 const Dashboard = () => {
   return (
-    <div className="container mx-auto p-4 w-full">
+    <div className="container w-full">
       {/* Cambiado de flex a grid correctamente */}
-      <div className="grid grid-cols-4 md:grid-cols-4 sm:grid-cols-1 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-5">
         <div className="shadow-xl p-6 bg-white rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Ventas Totales</h2>
           <p className="text-4xl font-semibold flex">

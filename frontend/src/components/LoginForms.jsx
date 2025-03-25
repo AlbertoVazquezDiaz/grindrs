@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import api from "../API/axiosConfig";
 import Alert from "./Alerts.jsx";
 
-
 const LoginForms = ({ switchToRegister }) => {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
@@ -12,32 +11,39 @@ const LoginForms = ({ switchToRegister }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Limpiar error antes de una nueva solicitud
-  
+    setError("");
+
     try {
       console.log("Enviando datos:", correo, password);
+
       const response = await api.post("login/", { correo, password });
       console.log("Inicio de sesión exitoso", response.data);
 
-      /* Objeto user que devuelve el back */
-      const { user } = response.data;
+      /* Extraemos la información relevante */
+      const { access, refresh, correo: userCorreo, rol } = response.data;
 
-      /* Guardamos información del usuario en el local storage aquí!!!! */
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", response.data.token);
-      
-      if (user.rol === "1"){
+      /* Guardamos información del usuario y tokens en localStorage */
+      localStorage.setItem("user", JSON.stringify({ correo: userCorreo, rol }));
+      localStorage.setItem("token", access);
+      localStorage.setItem("refresh_token", refresh);
+
+      /* Redirección según el rol */
+      if (rol.nmRol === "Admin") {
         navigate("/admin/dashboard");
-      }else{
+      } else {
         navigate("/");
       }
     } catch (err) {
-      console.error("Error al iniciar sesión:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Credenciales inválidas. Inténtalo de nuevo.");
+      console.error(
+        "Error al iniciar sesión:",
+        err.response?.data || err.message
+      );
+      setError(
+        err.response?.data?.message ||
+          "Credenciales inválidas. Inténtalo de nuevo."
+      );
     }
   };
-  
-
 
   return (
     <div className="flex justify-center items-center">
@@ -70,7 +76,7 @@ const LoginForms = ({ switchToRegister }) => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          
+
           {error && <Alert type="error" message={error} />}
           <button className="w-full bg-[#ffbb00] text-black text-sm py-3 font-bold px-4 rounded-sm hover:text-black/80 transition cursor-pointer">
             INICIAR SESIÓN
