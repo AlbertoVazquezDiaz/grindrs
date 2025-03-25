@@ -1,28 +1,49 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../API/axiosConfig";
+import Alert from "./Alerts.jsx";
 
 const LoginForms = ({ switchToRegister }) => {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    try {
-      // 🔹 Lógica de inicio de sesión
-      console.log(correo, password)
-      const response = await api.post("login/", {
-         correo, password 
-      });
-      console.log("Inicio de sesión exitoso", response.data);
-    }
-    catch (error) {
-      console.error("Error al iniciar sesión", error.response.data);
-      setError(error.response ? error.response.data.message : error.message);
-    }
-  }
 
+    try {
+      console.log("Enviando datos:", correo, password);
+
+      const response = await api.post("login/", { correo, password });
+      console.log("Inicio de sesión exitoso", response.data);
+
+      /* Extraemos la información relevante */
+      const { access, refresh, correo: userCorreo, rol } = response.data;
+
+      /* Guardamos información del usuario y tokens en localStorage */
+      localStorage.setItem("user", JSON.stringify({ correo: userCorreo, rol }));
+      localStorage.setItem("token", access);
+      localStorage.setItem("refresh_token", refresh);
+
+      /* Redirección según el rol */
+      if (rol.nmRol === "Admin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error(
+        "Error al iniciar sesión:",
+        err.response?.data || err.message
+      );
+      setError(
+        err.response?.data?.message ||
+          "Credenciales inválidas. Inténtalo de nuevo."
+      );
+    }
+  };
 
   return (
     <div className="flex justify-center items-center">
@@ -55,9 +76,8 @@ const LoginForms = ({ switchToRegister }) => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {error && (
-            <div className="text-red-500 text-sm mb-4 text-center">{error}</div>
-          )}
+
+          {error && <Alert type="error" message={error} />}
           <button className="w-full bg-[#ffbb00] text-black text-sm py-3 font-bold px-4 rounded-sm hover:text-black/80 transition cursor-pointer">
             INICIAR SESIÓN
           </button>

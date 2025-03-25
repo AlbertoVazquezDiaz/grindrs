@@ -41,11 +41,13 @@ class LoginJWTView(APIView):
         
         if user:
             refresh = RefreshToken.for_user(user)
+            rol_completo = RolSerializer(user.rol).data
             return Response({
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
                 'usuario_id': user.id,
-                'correo': user.correo
+                'correo': user.correo,
+                'rol': rol_completo
             })
         else:
             return Response({"error": "Credenciales inválidas."}, status=status.HTTP_401_UNAUTHORIZED)

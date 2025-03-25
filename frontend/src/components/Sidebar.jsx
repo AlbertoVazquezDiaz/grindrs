@@ -25,7 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       className={`fixed sm:static inset-y-0 left-0 w-52 bg-black text-white p-4 mt-6 rounded-md transform ${
         isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
       } transition-transform duration-300 ease-in-out z-40 shadow-lg sm:shadow-none`}
-    >
+    > 
       <ul className="space-y-4 cursor-pointer">
         <li className="hover:bg-gray-700 hover:text-yellow-400 p-2 rounded flex items-center">
           Motherboard
