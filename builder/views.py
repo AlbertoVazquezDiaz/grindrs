@@ -20,7 +20,11 @@ class RolViewSet(viewsets.ModelViewSet):
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    #render_classes = [JSONRenderer]
+    def get_queryset(self):
+        rol_id = self.request.query_params.get('rol')
+        if rol_id:
+            return Usuario.objects.filter(rol=rol_id)
+        return Usuario.objects.all()
 
 class TipoComponenteViewSet(viewsets.ModelViewSet):
     queryset = TipoComponente.objects.all()
@@ -37,7 +41,7 @@ class LoginJWTView(APIView):
         correo = request.data.get("correo")
         password = request.data.get("password")
 
-        user = authenticate(correo=correo, password=password)
+        user = authenticate(username=correo, password=password)
         
         if user:
             refresh = RefreshToken.for_user(user)
@@ -45,7 +49,6 @@ class LoginJWTView(APIView):
             return Response({
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-                'usuario_id': user.id,
                 'correo': user.correo,
                 'rol': rol_completo
             })

@@ -14,20 +14,15 @@ const LoginForms = ({ switchToRegister }) => {
     setError("");
 
     try {
-      console.log("Enviando datos:", correo, password);
-
       const response = await api.post("login/", { correo, password });
       console.log("Inicio de sesión exitoso", response.data);
 
-      /* Extraemos la información relevante */
       const { access, refresh, correo: userCorreo, rol } = response.data;
 
-      /* Guardamos información del usuario y tokens en localStorage */
       localStorage.setItem("user", JSON.stringify({ correo: userCorreo, rol }));
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
 
-      /* Redirección según el rol */
       if (rol.nmRol === "Admin") {
         navigate("/admin/dashboard");
       } else {
