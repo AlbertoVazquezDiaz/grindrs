@@ -1,9 +1,34 @@
 import { NoSymbolIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "../../API/axiosConfig";
 
-const UsersTable = (/* { users } */) => {
+
+
+const UsersTable = () => {
     const [searchTerm, setSearchTerm] = useState("");
-    const users = [
+    const [users, setUsers] = useState([]);
+    
+    useEffect(() => {
+        const fetchUsers = async () => {
+          try {
+            const response = await api.get("usuario/?rol=2");
+            const mappedUsers = response.data.map((user) => ({
+                id: user.id,
+                name: `${user.nombre} ${user.apellidos}`,
+                email: user.correo,
+                role: user.rol,
+              }));
+            setUsers(mappedUsers);
+            console.log(response)
+          } catch (error) {
+            console.error("Error al obtener usuarios:", error);
+          }
+        };
+    
+        fetchUsers();
+      }, []);
+    
+    const user = [
         {
             id: 1,
             name: "John Doe",
@@ -26,8 +51,8 @@ const UsersTable = (/* { users } */) => {
 
     const filteredUsers = users.filter(
         (user) =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.email.toLowerCase().includes(searchTerm.toLowerCase())
+            user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
