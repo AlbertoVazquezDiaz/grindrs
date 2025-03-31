@@ -65,7 +65,7 @@ class Computadora(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False)
 
 class DetalleComputadora(models.Model):
-    computadora = models.ForeignKey(Computadora, on_delete=models.CASCADE, null=False)
+    computadora = models.ForeignKey(Computadora, related_name="detalles", on_delete=models.CASCADE, null=False)
     componente = models.ForeignKey(Componente, on_delete=models.CASCADE, null=False)
     cantidad = models.IntegerField(default=1, null=False)
 
