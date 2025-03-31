@@ -26,7 +26,7 @@ const ProductView = () => {
             .catch((error) => {
                 console.error("Error fetching related products:", error);
             });
-    }, [productId]); // Ejecutar el efecto cuando cambie el ID del producto
+    }, [productId]);
 
     if (!product) {
         return <div>Loading...</div>;

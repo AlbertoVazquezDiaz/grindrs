@@ -5,9 +5,9 @@ const ProductCard = ({ product }) => {
   return (
     <Link
       to={`/product/${product.id}`}
-      className="flex justify-end text-nowrap group"
+      className="block w-full max-w-[290px] sm:max-w-full"
     >
-      <div className="bg-[#292929] w-64 rounded-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-yellow-500 relative">
+      <div className="bg-[#292929] rounded-lg overflow-hidden transition duration-300 ease-in-out hover:shadow-yellow-500 relative">
         <img
           src={product.image}
           alt={product.name}
