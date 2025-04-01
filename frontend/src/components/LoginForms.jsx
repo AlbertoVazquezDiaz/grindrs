@@ -39,6 +39,7 @@ const LoginForms = ({ switchToRegister }) => {
       );
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center">
