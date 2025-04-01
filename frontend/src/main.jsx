@@ -5,6 +5,8 @@ import router from "./router";
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

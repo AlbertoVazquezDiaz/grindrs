@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { confirmAlert } from "react-confirm-alert";
 import api from "../../API/axiosConfig";
 import { toast } from "react-toastify";
 import {
@@ -20,13 +21,21 @@ const Products = () => {
     precio: "",
     tipo_componente: "",
     stock: "",
-    //imagen1: null,
   });
   const [preview, setPreview] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showStockModal, setShowStockModal] = useState(false);
   const [selectedComponente, setSelectedComponente] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingComponent, setEditingComponent] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+
+  const openEditModal = (component) => {
+    setEditingComponent(component);
+    setEditFormData({ ...component });
+    setShowEditModal(true);
+  };
 
   useEffect(() => {
     fetchComponentes();
@@ -44,56 +53,30 @@ const Products = () => {
       setIsLoading(false);
     }
   };
-  
-  /*
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 5) {
-      toast.error("Máximo 5 imágenes permitidas.");
-      return; 
-    }
-
-    const previews = [];
-    const updatedFormData = { ...formData };
-
-    files.forEach((file, index) => {
-      if (["image/png", "image/jpeg"].includes(file.type)) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          updatedFormData[`imagen${index + 1}`] = reader.result;
-          setFormData(updatedFormData);
-        };
-        reader.readAsDataURL(file);
-        previews.push(URL.createObjectURL(file));
-      } else {
-        toast.error("Solo se permiten imágenes PNG o JPG.");
-      }
-    });
-
-    setPreview(previews);
-  };
-  */
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
 
-    const total = Object.keys(formData).filter(k => k.startsWith("imagen")).length + files.length;
+    const total =
+      Object.keys(formData).filter((k) => k.startsWith("imagen")).length +
+      files.length;
     if (total > 5) {
       toast.error("Máximo 5 imágenes permitidas.");
-      return; 
+      return;
     }
 
-    const newpreviews = [ ...preview];
+    const newpreviews = [...preview];
     const updatedFormData = { ...formData };
 
-    let nextIndex = Object.keys(formData).filter(k => k.startsWith("imagen")).length + 1;
+    let nextIndex =
+      Object.keys(formData).filter((k) => k.startsWith("imagen")).length + 1;
 
     files.forEach((file) => {
       if (["image/png", "image/jpeg"].includes(file.type)) {
         const reader = new FileReader();
         reader.onloadend = () => {
           updatedFormData[`imagen${nextIndex}`] = reader.result;
-          setFormData({ ...updatedFormData});
+          setFormData({ ...updatedFormData });
           nextIndex++;
         };
         reader.readAsDataURL(file);
@@ -104,6 +87,69 @@ const Products = () => {
     });
 
     setPreview(newpreviews);
+  };
+
+  const handleDeleteComponent = (id) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="bg-gray-800 p-6 rounded shadow-lg text-center w-full max-w-md mx-auto">
+            <h2 className="text-lg font-bold mb-3 text-yellow-400">
+              ¿Eliminar componente?
+            </h2>
+            <p className="text-sm text-gray-200 mb-6">
+              Esta acción no se puede deshacer.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                onClick={async () => {
+                  try {
+                    toast.info("Eliminando componente...");
+                    await api.delete(`componente/${id}/`);
+                    toast.success("Componente eliminado");
+                    onClose();
+                    fetchComponentes();
+                  } catch (err) {
+                    console.error("Error al eliminar componente", err);
+                    toast.error("Error al eliminar el componente.");
+                  }
+                }}
+              >
+                Sí, eliminar
+              </button>
+              <button
+                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded text-gray-800"
+                onClick={onClose}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  const handleUpdateComponent = async () => {
+    const hasChanges = Object.entries(editFormData).some(
+      ([key, value]) => value !== editingComponent[key]
+    );
+
+    if (!hasChanges) {
+      toast.info("No hay cambios para guardar.");
+      return;
+    }
+
+    try {
+      await api.patch(`componente/${editingComponent.id}/`, editFormData);
+      toast.success("Componente actualizado correctamente");
+      fetchComponentes();
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error al actualizar componente", err);
+      toast.error("Error al actualizar el componente.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -150,8 +196,17 @@ const Products = () => {
           >
             <PlusCircleIcon className="w-4 h-4" />
           </button>
-          <button className="bg-gray-600 hover:bg-gray-700 p-2 rounded text-white">
+          <button
+            className="bg-gray-600 hover:bg-gray-700 p-2 rounded text-white"
+            onClick={() => openEditModal(row)}
+          >
             <PencilSquareIcon className="w-4 h-4" />
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-600 p-2 rounded text-white"
+            onClick={() => handleDeleteComponent(row.id)}
+          >
+            <XMarkIcon className="w-4 h-4" />
           </button>
         </div>
       ),
@@ -250,7 +305,7 @@ const Products = () => {
                   onChange={handleImageChange}
                 />
               </label>
-              
+
               {preview.length > 0 && (
                 <div className="flex flex-wrap gap-2 justify-center">
                   {preview.map((src, idx) => (
@@ -298,6 +353,64 @@ const Products = () => {
         componente={selectedComponente}
         onStockUpdated={fetchComponentes}
       />
+
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-8">
+          <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full relative p-12">
+            <button
+              className="absolute top-6 right-6 text-gray-200 hover:text-gray-400 hover:cursor-pointer"
+              onClick={() => setShowEditModal(false)}
+            >
+              <XMarkIcon className="h-8 w-8" />
+            </button>
+            <h2 className="text-xl text-gray-200 font-semibold mb-4">
+              Editar:{" "}
+              <span className="text-yellow-400">
+                {editingComponent?.nombre}
+              </span>
+            </h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateComponent();
+              }}
+              className="flex flex-wrap gap-3 text-gray-200"
+            >
+              {[
+                "nombre",
+                "marca",
+                "modelo",
+                "precio",
+                "stock",
+                "tipo_componente",
+              ].map((field) => (
+                <input
+                  key={field}
+                  type={
+                    field === "precio" || field === "stock" ? "number" : "text"
+                  }
+                  placeholder={field}
+                  value={editFormData[field] || ""}
+                  className="border px-3 py-2 rounded w-full"
+                  onChange={(e) =>
+                    setEditFormData({
+                      ...editFormData,
+                      [field]: e.target.value,
+                    })
+                  }
+                />
+              ))}
+
+              <button
+                type="submit"
+                className="mt-4 bg-yellow-400 px-6 py-2 rounded text-black hover:cursor-pointer hover:bg-yellow-500 w-full"
+              >
+                Guardar cambios
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
