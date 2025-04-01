@@ -13,6 +13,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('login/', LoginJWTView.as_view(), name='login-jwt'),
     path('compatibilidades/', RegistroCompatibilidadView.as_view(), name='multiplesCompatibilidades'),
-    path('computadoras/', ComputadoraCreateView.as_view(), name='crearComputadora'),
+    path('computadoras/', ComputadoraCreateView.as_view(), name='computadoras'),
+    path('computadoras/<int:pk>/', ComputadoraChangeView.as_view(), name='computadorasDetalle'),
     path('ventas/', VentaCreteView.as_view(), name='crearVenta'),
 ]

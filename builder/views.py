@@ -11,6 +11,7 @@ from rest_framework import status
 
 from django.shortcuts import render
 
+from rest_framework.generics import get_object_or_404
 
 class RolViewSet(viewsets.ModelViewSet):
     queryset = Rol.objects.all()
@@ -67,6 +68,11 @@ class RegistroCompatibilidadView(APIView):
 
 
 class ComputadoraCreateView(APIView):
+    def get(self, request):
+        computadora = Computadora.objects.all()
+        serializer = ComputadoraSerializer(computadora, many=True)
+        return Response(serializer.data)
+
     def post(self, request):
         serializer = ComputadoraSerializer(data=request.data)
 
@@ -77,6 +83,30 @@ class ComputadoraCreateView(APIView):
                 "computadoira_id": computadora.id
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ComputadoraChangeView(APIView):
+    
+    def get(self, request, pk):
+        computadora = get_object_or_404(Computadora, pk=pk)
+        serializer = ComputadoraSerializer(computadora)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        computadora = get_object_or_404(Computadora, pk=pk)
+        serializer = ComputadoraSerializer(computadora, data=request.data)
+        
+        if serializer.is_valid():
+            computadora = serializer.save()
+            return Response({
+                "message": "Computadora actualizada exitosamente",
+                "computadora_id": computadora.id
+            })
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        computadora = get_object_or_404(Computadora, pk=pk)
+        computadora.delete()
+        return Response({"message": "Computadora eliminada exitosamente"}, status=status.HTTP_204_NO_CONTENT)
 
 class VentaCreteView(APIView):
     def post(self, request):

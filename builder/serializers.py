@@ -64,6 +64,28 @@ class ComputadoraSerializer(serializers.ModelSerializer):
 
         return computadora
 
+    def update(self, instance, validated_data):
+        detalles_data = validated_data.pop('detalles', None)
+
+        # Actualizar campos principales
+        instance.nombre = validated_data.get('nombre', instance.nombre)
+        instance.descripcion = validated_data.get('descripcion', instance.descripcion)
+        instance.usuario = validated_data.get('usuario', instance.usuario)
+        instance.save()
+
+        if detalles_data is not None:
+            # Eliminar detalles anteriores
+            instance.detalles.all().delete()
+
+            # Crear nuevos detalles
+            nuevos_detalles = [
+                DetalleComputadora(computadora=instance, **detalle)
+                for detalle in detalles_data
+            ]
+            DetalleComputadora.objects.bulk_create(nuevos_detalles)
+
+        return instance
+
 class DetalleVentaSerializer(serializers.ModelSerializer):
     class Meta:
         model: DetalleVenta

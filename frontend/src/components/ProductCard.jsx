@@ -30,6 +30,9 @@ const ProductCard = ({ product }) => {
       <p className="text-gray-400 text-sm line-clamp-2">
         {product.description || "Sin descripción"}
       </p>
+      <p className="text-gray-400 text-sm line-clamp-2">
+        {product.detail || "Sin detalles"}
+      </p>
       <p className="text-lg font-bold text-gray-200">${product.price}</p>
     </div>
 

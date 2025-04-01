@@ -18,6 +18,7 @@ const Products = () => {
     nombre: "",
     marca: "",
     modelo: "",
+    descripcion: "",
     precio: "",
     tipo_componente: "",
     stock: "",
@@ -171,6 +172,7 @@ const Products = () => {
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
     { name: "Marca", selector: (row) => row.marca },
     { name: "Modelo", selector: (row) => row.modelo },
+    { name: "Descripcion", selector: (row) => row.descripcion},
     { name: "Precio", selector: (row) => `$${row.precio}` },
     { name: "Stock", selector: (row) => row.stock },
     {
@@ -268,6 +270,14 @@ const Products = () => {
                 className="border px-3 py-2 rounded w-full"
                 onChange={(e) =>
                   setFormData({ ...formData, modelo: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Descripcion"
+                className="border px-3 py-2 rounded w-full"
+                onChange={(e) =>
+                  setFormData({ ...formData, descripcion: e.target.value })
                 }
               />
               <input
@@ -380,6 +390,7 @@ const Products = () => {
                 "nombre",
                 "marca",
                 "modelo",
+                "descripcion",
                 "precio",
                 "stock",
                 "tipo_componente",

@@ -45,6 +45,7 @@ class Componente(models.Model):
     nombre = models.CharField(max_length=255, null=False)
     marca = models.CharField(max_length=100, null=False)
     modelo = models.CharField(max_length=100, null=False)
+    descripcion = models.CharField(max_length=200, null=False, default="Sin descripcion")
     precio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     imagen1 = models.TextField(null=False)  # URL o base64 de la imagen
     imagen2 = models.TextField(null=True, blank=True)
@@ -65,7 +66,7 @@ class Computadora(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False)
 
 class DetalleComputadora(models.Model):
-    computadora = models.ForeignKey(Computadora, on_delete=models.CASCADE, null=False)
+    computadora = models.ForeignKey(Computadora, related_name="detalles", on_delete=models.CASCADE, null=False)
     componente = models.ForeignKey(Componente, on_delete=models.CASCADE, null=False)
     cantidad = models.IntegerField(default=1, null=False)
 

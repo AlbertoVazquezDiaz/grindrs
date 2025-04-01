@@ -19,7 +19,8 @@ const Landing = () => {
         const mapped = res.data.map((item) => ({
           id: item.id,
           name: item.nombre,
-          description: `${item.marca} ${item.modelo}`,
+          description: item.descripcion, 
+          detail: `${item.marca} ${item.modelo}`,
           price: item.precio,
           image: item.imagen1,
           stock: item.stock ,
