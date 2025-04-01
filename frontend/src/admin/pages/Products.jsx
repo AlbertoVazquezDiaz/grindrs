@@ -20,7 +20,7 @@ const Products = () => {
     precio: "",
     tipo_componente: "",
     stock: "",
-    imagen1: null,
+    //imagen1: null,
   });
   const [preview, setPreview] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -44,12 +44,13 @@ const Products = () => {
       setIsLoading(false);
     }
   };
-
+  
+  /*
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 5) {
       toast.error("Máximo 5 imágenes permitidas.");
-      return;
+      return; 
     }
 
     const previews = [];
@@ -71,10 +72,43 @@ const Products = () => {
 
     setPreview(previews);
   };
+  */
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    const total = Object.keys(formData).filter(k => k.startsWith("imagen")).length + files.length;
+    if (total > 5) {
+      toast.error("Máximo 5 imágenes permitidas.");
+      return; 
+    }
+
+    const newpreviews = [ ...preview];
+    const updatedFormData = { ...formData };
+
+    let nextIndex = Object.keys(formData).filter(k => k.startsWith("imagen")).length + 1;
+
+    files.forEach((file) => {
+      if (["image/png", "image/jpeg"].includes(file.type)) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          updatedFormData[`imagen${nextIndex}`] = reader.result;
+          setFormData({ ...updatedFormData});
+          nextIndex++;
+        };
+        reader.readAsDataURL(file);
+        newpreviews.push(URL.createObjectURL(file));
+      } else {
+        toast.error("Solo se permiten imágenes PNG o JPG.");
+      }
+    });
+
+    setPreview(newpreviews);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData);
     try {
       await api.post("componente/", formData);
       toast.success("Componente registrado correctamente");
