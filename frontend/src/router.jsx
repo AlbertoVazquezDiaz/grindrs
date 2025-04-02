@@ -28,7 +28,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/ProductView",
-    element: <ProductView />,
+    element: <MainLayout />,
+    children: [
+      { path: "/ProductView/:productId", element: <ProductView /> },
+    ]
   },
   {
     path: "/admin",
