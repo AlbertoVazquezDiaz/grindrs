@@ -31,6 +31,7 @@ const Products = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingComponent, setEditingComponent] = useState(null);
   const [editFormData, setEditFormData] = useState({});
+  const [tiposComponentes, setTiposComponentes] = useState({});
 
   const openEditModal = (component) => {
     setEditingComponent(component);
@@ -47,6 +48,8 @@ const Products = () => {
       setIsLoading(true);
       const response = await api.get("componente/");
       setComponentes(response.data);
+      const responses = await api.get("tipoComponente/");
+      setTiposComponentes(responses.data);
     } catch (error) {
       toast.error("Error al obtener componentes.");
       console.error("Error al obtener componentes:", error);
@@ -172,7 +175,7 @@ const Products = () => {
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
     { name: "Marca", selector: (row) => row.marca },
     { name: "Modelo", selector: (row) => row.modelo },
-    { name: "Descripcion", selector: (row) => row.descripcion},
+    { name: "Descripcion", selector: (row) => row.descripcion },
     { name: "Precio", selector: (row) => `$${row.precio}` },
     { name: "Stock", selector: (row) => row.stock },
     {
@@ -296,14 +299,26 @@ const Products = () => {
                   setFormData({ ...formData, stock: e.target.value })
                 }
               />
-              <input
+              <select
+                className="border px-3 py-2 rounded w-full"
+                value={formData.tipo_componente}
+                onChange={(e) => setFormData({ ...formData, tipo_componente: e.target.value })}
+              >
+                <option value="null">Tipo componente</option>
+                {tiposComponentes.map((tipo) => (
+                  <option key={tipo.id} value={tipo.id}>
+                    {tipo.nombre}
+                  </option>
+                ))}
+              </select>
+              {/*<input
                 type="number"
                 placeholder="Tipo componente ID"
                 className="border px-3 py-2 rounded w-full"
                 onChange={(e) =>
                   setFormData({ ...formData, tipo_componente: e.target.value })
                 }
-              />
+              />*/}
               <label className="cursor-pointer w-full bg-white border-dashed border-2 border-yellow-400 px-4 py-3 rounded text-gray-700 text-center">
                 <PhotoIcon className="w-6 h-6 mx-auto mb-2" />
                 Subir imagen
@@ -393,7 +408,6 @@ const Products = () => {
                 "descripcion",
                 "precio",
                 "stock",
-                "tipo_componente",
               ].map((field) => (
                 <input
                   key={field}
@@ -411,6 +425,24 @@ const Products = () => {
                   }
                 />
               ))}
+
+              <select
+                className="border px-3 py-2 rounded w-full"
+                value={editFormData.tipo_componente}
+                onChange={(e) =>
+                  setEditFormData({
+                    ...editFormData,
+                    tipo_componente: e.target.value,
+                  })
+                }
+              >
+                <option value="" className="bg-gray-800">Tipo componente</option>
+                {tiposComponentes.map((tipo) => (
+                  <option key={tipo.id} value={tipo.id} className="bg-gray-800">
+                    {tipo.nombre}
+                  </option>
+                ))}
+              </select>
 
               <button
                 type="submit"
