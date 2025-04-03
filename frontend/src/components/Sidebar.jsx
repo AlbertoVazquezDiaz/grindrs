@@ -1,9 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import api from "../API/axiosConfig";
 
 const Sidebar = ({ isOpen, onClose }) => {
   const sidebarRef = useRef(null);
+  const [tiposComponentes, setTiposComponentes] = useState([])
+
+  const fetchTipos = async () => {
+    const response = await api.get("tipoComponente/")
+    setTiposComponentes(response.data);
+  }
 
   useEffect(() => {
+    fetchTipos();
     const handleClickOutside = (event) => {
       if (
         sidebarRef.current &&
@@ -42,25 +50,16 @@ const Sidebar = ({ isOpen, onClose }) => {
       >
         <h2 className="text-lg font-semibold mb-4">Filtrar por categoría</h2>
         <ul className="space-y-2">
-          {[
-            "Motherboard",
-            "CPU",
-            "GPU",
-            "RAM",
-            "Storage",
-            "Power Supply",
-            "Cooling System",
-            "Case",
-          ].map((item, i) => (
+          {tiposComponentes.map((tipo) => (
             <li
-              key={i}
+              key={tipo.id}
               onClick={() => {
-                console.log(`Filtrar: ${item}`);
+                console.log(`Filtrar: ${tipo}`);
                 if (window.innerWidth < 768) onClose();
               }}
               className="cursor-pointer p-2 rounded hover:bg-white/10 hover:text-yellow-400 transition"
             >
-              {item}
+              {tipo.nombre}
             </li>
           ))}
         </ul>
