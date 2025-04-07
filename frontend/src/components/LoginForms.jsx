@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../API/axiosConfig";
 import Alert from "./Alerts.jsx";
 
-const LoginForms = ({ switchToRegister }) => {
+const LoginForms = ({ switchToRegister, switchToForgot}) => {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,7 +23,7 @@ const LoginForms = ({ switchToRegister }) => {
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
 
-      if (rol.nmRol === "Admin") {
+      if (rol.nmRol === "admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/");
@@ -94,12 +94,13 @@ const LoginForms = ({ switchToRegister }) => {
               <hr className="w-1/4 text-white" />
             </div>
             <p className="text-center text-sm mt-8">
-              <a
+              <button
                 className="text-yellow-400 hover:text-yellow-500"
-                href="/auth/forgot-password"
+                type="button"
+                onClick={switchToForgot}
               >
                 ¿Olvidaste tu contraseña?
-              </a>
+              </button>
             </p>
           </div>
         </form>

@@ -10,6 +10,7 @@ import Products from "./admin/pages/Products";
 import Users from "./admin/pages/Users";
 import Settings from "./admin/pages/Settings";
 import ProtectedRoute from "./admin/components/ProtectedRoute"; 
+import ResetPassword from "./pages/ResetPassword";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
     children: [
       { path: "/ProductView/:productId", element: <ProductView /> },
     ]
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
   },
   {
     path: "/admin",

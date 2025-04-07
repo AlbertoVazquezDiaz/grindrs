@@ -3,6 +3,7 @@ const publicRoutes = ["login", "register", "token/refresh"];
 
 const api = axios.create({
     baseURL: "http://127.0.0.1:8000/estancias/",
+    //baseURL: "http://192.168.1.79:8000/estancias/",
     headers: {
       "Content-Type": "application/json",
     },

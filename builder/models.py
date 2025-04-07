@@ -28,6 +28,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     correo = models.EmailField(max_length=200, unique=True, null=False)
     password = models.CharField(max_length=128, null=False, default="default_password")
     token = models.CharField(max_length=255, null=True, blank=True)
+    token_expiration = models.DateTimeField(null=True, blank=True)
     rol = models.ForeignKey(Rol, on_delete=models.CASCADE, related_name="usuarios", null=False)
 
     is_active = models.BooleanField(default=True)
