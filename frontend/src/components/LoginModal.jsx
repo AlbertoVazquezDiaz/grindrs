@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import LoginForms from "./LoginForms";
 import RegisterForm from "./RegisterForm";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 const LoginModal = ({ isOpen, closeModal, isRegister }) => {
   const [currentView, setCurrentView] = useState("login");
@@ -18,14 +19,16 @@ const LoginModal = ({ isOpen, closeModal, isRegister }) => {
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-md bg-black border-1 border-yellow-400/50 rounded-lg shadow-lg p-6">
             <Dialog.Title className="text-xl text-center py-4 font-semibold text-white">
-              {currentView === "register" ? "Regístrate" : "Iniciar sesión"}
+              {currentView === "register" ? "Regístrate" : currentView === "forgot" ? "Recuperar contraseña" : "Iniciar sesión"}
             </Dialog.Title>
 
             {/* 🔹 Muestra el formulario correcto */}
             {currentView === "register" ? (
               <RegisterForm switchToLogin={() => setCurrentView("login")} />
+            ) : currentView === "forgot" ? (
+              <ForgotPasswordForm switchToLogin={() => setCurrentView("login")} />
             ) : (
-              <LoginForms switchToRegister={() => setCurrentView("register")} />
+              <LoginForms switchToRegister={() => setCurrentView("register")} switchToForgot={() => setCurrentView("forgot")} />
             )}
           </Dialog.Panel>
         </div>

@@ -12,6 +12,8 @@ router.register(r'componente',ComponenteViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', LoginJWTView.as_view(), name='login-jwt'),
+    path('send-code/', send_reset_email, name='send-reset-email'),
+    path('reset-password/', reset_password, name='reset-password'),
     path('compatibilidades/', RegistroCompatibilidadView.as_view(), name='multiplesCompatibilidades'),
     path('computadoras/', ComputadoraCreateView.as_view(), name='computadoras'),
     path('computadoras/<int:pk>/', ComputadoraChangeView.as_view(), name='computadorasDetalle'),
