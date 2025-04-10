@@ -83,7 +83,7 @@ const LoginForms = ({ switchToRegister, switchToForgot}) => {
               ¿No tienes una cuenta?{" "}
               <button
                 className="text-yellow-400 hover:text-yellow-500 cursor-pointer"
-                onClick={switchToRegister} // 🔹 Cambia a Registro sin cerrar el modal
+                onClick={switchToRegister} 
               >
                 Regístrate
               </button>
