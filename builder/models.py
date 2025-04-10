@@ -55,8 +55,14 @@ class Componente(models.Model):
     imagen5 = models.TextField(null=True, blank=True)
     stock = models.IntegerField(default=0, null=False)
     tipo_componente = models.ForeignKey(TipoComponente, on_delete=models.CASCADE, related_name="componentes", null=False)
+    consumo_watts = models.PositiveIntegerField(null=True, default=0)
+    potencia_watts = models.PositiveIntegerField(null=True)  # Capacidad total
+    certificacion = models.CharField(max_length=50, null=True, blank=True)  # Opcional: 80 Plus Bronze, Gold, etc.
 
 class Compatibilidad(models.Model):
+    class Meta:
+        unique_together = ('componente_base', 'componente_compatible')
+
     componente_base = models.ForeignKey(Componente, related_name="base", on_delete=models.CASCADE, null=False)
     componente_compatible = models.ForeignKey(Componente, related_name="compatible", on_delete=models.CASCADE, null=False)
 

@@ -22,6 +22,9 @@ const Products = () => {
     precio: "",
     tipo_componente: "",
     stock: "",
+    consumo_watts: "0",
+    potencia_watts: "0",
+    certificacion: "null",
   });
   const [preview, setPreview] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -32,16 +35,41 @@ const Products = () => {
   const [editingComponent, setEditingComponent] = useState(null);
   const [editFormData, setEditFormData] = useState({});
   const [tiposComponentes, setTiposComponentes] = useState({});
+  const [tipoComponente, setTipoComponente] = useState("");
+  const [tipoComponenteEditar, setTipoComponenteEditar] = useState("");
 
   const openEditModal = (component) => {
     setEditingComponent(component);
     setEditFormData({ ...component });
+    
+    const tipo = Object.values(tiposComponentes).find(
+      (t) => t.id === component.tipo_componente
+    );
+    setTipoComponenteEditar(tipo?.nombre || "");
+
     setShowEditModal(true);
   };
 
   useEffect(() => {
     fetchComponentes();
   }, []);
+
+  const resertForm = () => {
+    setFormData({
+      nombre: "",
+      marca: "",
+      modelo: "",
+      descripcion: "",
+      precio: "",
+      tipo_componente: "",
+      stock: "",
+      consumo_watts: "0",
+      potencia_watts: "0",
+      certificacion: "null",
+    });
+    setPreview([]);
+    setTipoComponente("");
+  }
 
   const fetchComponentes = async () => {
     try {
@@ -164,12 +192,39 @@ const Products = () => {
       toast.success("Componente registrado correctamente");
       setShowModal(false);
       fetchComponentes();
+      resertForm();
       console.log(formData);
     } catch (err) {
       console.error("Error al registrar componente", err);
       toast.error("Error al registrar el componente.");
     }
   };
+
+  const handleChange = (e) => {
+    const selectedId = e.target.value;
+    const tipo = Object.values(tiposComponentes).find(
+      (t) => t.id.toString() === selectedId
+    );
+    setTipoComponente(tipo?.nombre || "");
+
+    if (tipo?.nombre === "Fuente de poder") {
+      setFormData({
+        ...formData,
+        tipo_componente: selectedId,
+        consumo_watts: "0",
+        potencia_watts: "",
+        certificacion: "",
+      });
+    } else {
+      setFormData({
+        ...formData,
+        tipo_componente: selectedId,
+        consumo_watts: "",
+        potencia_watts: "0",
+        certificacion: "null",
+      });
+    }
+  }
 
   const columns = [
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -241,7 +296,10 @@ const Products = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full relative p-12">
             <button
               className="absolute top-6 right-6 text-gray-500 hover:text-black"
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                resertForm();
+                setShowModal(false)
+              }}
             >
               <XMarkIcon className="h-8 w-8 font-extrabold hover:cursor-pointer" />
             </button>
@@ -302,7 +360,7 @@ const Products = () => {
               <select
                 className="border px-3 py-2 rounded w-full"
                 value={formData.tipo_componente}
-                onChange={(e) => setFormData({ ...formData, tipo_componente: e.target.value })}
+                onChange={handleChange}
               >
                 <option value="null">Tipo componente</option>
                 {tiposComponentes.map((tipo) => (
@@ -311,6 +369,42 @@ const Products = () => {
                   </option>
                 ))}
               </select>
+
+              {tipoComponente === "Fuente de poder" ? (
+                <>
+                  <input
+                    type="number"
+                    placeholder="Potencia en watts"
+                    className="border px-3 py-2 rounded w-full"
+                    onChange={(e) =>
+                      setFormData({ ...formData, potencia_watts: e.target.value })
+                    }
+                  />
+                  <select
+                    className="border px-3 py-2 rounded w-full"
+                    onChange={(e) =>
+                      setFormData({ ...formData, certificacion: e.target.value })
+                    }
+                  >
+                    <option value="">Certificación</option>
+                    <option value="80 PLUS">80 PLUS</option>
+                    <option value="80 PLUS Bronze">80 PLUS Bronze</option>
+                    <option value="80 PLUS Silver">80 PLUS Silver</option>
+                    <option value="80 PLUS Gold">80 PLUS Gold</option>
+                    <option value="80 PLUS Platinum">80 PLUS Platinum</option>
+                    <option value="80 PLUS Titanium">80 PLUS Titanium</option>
+                  </select>
+                </>
+              ) : (
+                <input
+                  type="number"
+                  placeholder="Consumo en watts"
+                  className="border px-3 py-2 rounded w-full"
+                  onChange={(e) =>
+                    setFormData({ ...formData, consumo_watts: e.target.value })
+                  }
+                />
+              )}
               {/*<input
                 type="number"
                 placeholder="Tipo componente ID"
@@ -429,12 +523,31 @@ const Products = () => {
               <select
                 className="border px-3 py-2 rounded w-full"
                 value={editFormData.tipo_componente}
-                onChange={(e) =>
-                  setEditFormData({
-                    ...editFormData,
-                    tipo_componente: e.target.value,
-                  })
-                }
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const tipo = Object.values(tiposComponentes).find(
+                    (t) => t.id.toString() === selectedId
+                  );
+                  setTipoComponenteEditar(tipo?.nombre || "");
+
+                  if (tipo?.nombre === "Fuente de poder") {
+                    setEditFormData({
+                      ...editFormData,
+                      tipo_componente: selectedId,
+                      consumo_watts: "0",
+                      potencia_watts: "",
+                      certificacion: "",
+                    });
+                  } else {
+                    setEditFormData({
+                      ...editFormData,
+                      tipo_componente: selectedId,
+                      consumo_watts: "",
+                      potencia_watts: "0",
+                      certificacion: "null",
+                    });
+                  }
+                }}
               >
                 <option value="" className="bg-gray-800">Tipo componente</option>
                 {tiposComponentes.map((tipo) => (
@@ -443,6 +556,45 @@ const Products = () => {
                   </option>
                 ))}
               </select>
+
+              {tipoComponenteEditar === "Fuente de poder" ? (
+                <>
+                  <input
+                    type="number"
+                    placeholder="Potencia en watts"
+                    value={editFormData.potencia_watts || ""}
+                    className="border px-3 py-2 rounded w-full"
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, potencia_watts: e.target.value })
+                    }
+                  />
+                  <select
+                    className="border px-3 py-2 rounded w-full"
+                    value={editFormData.certificacion || ""}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, certificacion: e.target.value })
+                    }
+                  >
+                    <option value="">Certificación</option>
+                    <option value="80 PLUS">80 PLUS</option>
+                    <option value="80 PLUS Bronze">80 PLUS Bronze</option>
+                    <option value="80 PLUS Silver">80 PLUS Silver</option>
+                    <option value="80 PLUS Gold">80 PLUS Gold</option>
+                    <option value="80 PLUS Platinum">80 PLUS Platinum</option>
+                    <option value="80 PLUS Titanium">80 PLUS Titanium</option>
+                  </select>
+                </>
+              ) : (
+                <input
+                  type="number"
+                  placeholder="Consumo en watts"
+                  value={editFormData.consumo_watts || ""}
+                  className="border px-3 py-2 rounded w-full"
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, consumo_watts: e.target.value })
+                  }
+                />
+              )}
 
               <button
                 type="submit"
