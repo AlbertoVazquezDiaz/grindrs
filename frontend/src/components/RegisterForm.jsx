@@ -5,6 +5,13 @@ import Alert from "./Alerts";
 import { Navigate } from "react-router-dom";
 
 const RegisterForm = ({ switchToLogin }) => {
+  const [data, setData] = useState({
+    nombre: "",
+    apellidos: "",
+    correo: "",
+    password: "",
+    rol: 2,
+  });
   const [name, setName] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -16,19 +23,13 @@ const RegisterForm = ({ switchToLogin }) => {
     e.preventDefault();
     setAlert({ type: "", message: "" });
 
-    if (password !== confirmPassword) {
+    if (data.password !== confirmPassword) {
       setAlert({ type: "error", message: "Las contraseñas no coinciden." });
       return;
     }
 
     try {
-      const response = await api.post("usuario/", {
-        nombre: name,
-        apellidos: lastname,
-        correo: email,
-        password: password,
-        rol: 2,
-      });
+      const response = await api.post("usuario/", data);
       console.log("Registro exitoso", response.data);
 
       setAlert({
@@ -36,12 +37,16 @@ const RegisterForm = ({ switchToLogin }) => {
         message: "Registro exitoso, ahora puedes iniciar sesión.",
       });
 
-      setName("");
-      setLastname("");
-      setEmail("");
-      setPassword("");
+      setData({
+        nombre: "",
+        apellidos: "",
+        correo: "",
+        password: "",
+        rol: 2,
+      });
       setConfirmPassword("");
-      Navigate("/");
+      setAlert({ type: "success", message: "Registro Exitoso" });
+      //Navigate("/");
     } catch (error) {
       if (error.response && error.response.data) {
         const errores = error.response.data;
@@ -67,8 +72,9 @@ const RegisterForm = ({ switchToLogin }) => {
               className="mt-1 block w-full border-b shadow-sm text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               type="text"
               placeholder="Nombre(s)"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={data.nombre}
+              onChange={(e) => setData({ ...data, nombre: e.target.value })}
+              
             />
           </div>
 
@@ -80,8 +86,8 @@ const RegisterForm = ({ switchToLogin }) => {
               className="mt-1 block w-full border-b shadow-sm text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               type="text"
               placeholder="Apellido"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
+              value={data.apellidos}
+              onChange={(e) => setData({ ...data, apellidos: e.target.value })}
             />
           </div>
 
@@ -93,8 +99,8 @@ const RegisterForm = ({ switchToLogin }) => {
               className="mt-1 block w-full border-b shadow-sm text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               type="email"
               placeholder="Correo electrónico"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={data.correo}
+              onChange={(e) => setData({ ...data, correo: e.target.value })}
             />
           </div>
 
@@ -106,8 +112,8 @@ const RegisterForm = ({ switchToLogin }) => {
               className="mt-1 block w-full border-b shadow-sm text-white sm:text-sm p-2 focus:ring-0 focus:outline-none focus:border-b-yellow-400 hover:border-b-yellow-400"
               type="password"
               placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
             />
           </div>
 

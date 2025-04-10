@@ -3,6 +3,8 @@
 #djangorestframework:
     #pip install djangorestframework
 
+#pip install python-dotenv
+
 #INSTALACION:
 
 #pip install djangorestframework-simplejwt
