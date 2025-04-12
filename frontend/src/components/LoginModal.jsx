@@ -7,7 +7,6 @@ import ForgotPasswordForm from "./ForgotPasswordForm";
 const LoginModal = ({ isOpen, closeModal, isRegister }) => {
   const [currentView, setCurrentView] = useState("login");
 
-  // 🔹 Sincroniza el estado del modal cuando se abre
   useEffect(() => {
     setCurrentView(isRegister ? "register" : "login");
   }, [isOpen, isRegister]);
@@ -21,14 +20,12 @@ const LoginModal = ({ isOpen, closeModal, isRegister }) => {
             <Dialog.Title className="text-xl text-center py-4 font-semibold text-white">
               {currentView === "register" ? "Regístrate" : currentView === "forgot" ? "Recuperar contraseña" : "Iniciar sesión"}
             </Dialog.Title>
-
-            {/* 🔹 Muestra el formulario correcto */}
             {currentView === "register" ? (
               <RegisterForm switchToLogin={() => setCurrentView("login")} />
             ) : currentView === "forgot" ? (
               <ForgotPasswordForm switchToLogin={() => setCurrentView("login")} />
             ) : (
-              <LoginForms switchToRegister={() => setCurrentView("register")} switchToForgot={() => setCurrentView("forgot")} />
+              <LoginForms switchToRegister={() => setCurrentView("register")} switchToForgot={() => setCurrentView("forgot")} closeModal={closeModal} />
             )}
           </Dialog.Panel>
         </div>
