@@ -140,6 +140,12 @@ class LoginJWTView(APIView):
 
 
 class RegistroCompatibilidadView(APIView):
+    def get(self, request):
+        compatibilidades = Compatibilidad.objects.all()
+        serializer = CompatibilidadReadSerializer(compatibilidades, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        
     def post(self, request):
         serializer = multipleCompatibilidadSerializer(data = request.data)
 
@@ -148,6 +154,13 @@ class RegistroCompatibilidadView(APIView):
             return Response({"message": "Compatibilidades registrada correctamente"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk=None):
+        try:
+            compatibilidad = Compatibilidad.objects.get(id=pk)
+            compatibilidad.delete()
+            return Response({"message": "Compatibilidad eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        except Compatibilidad.DoesNotExist:
+            return Response({"error": "Compatibilidad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
 
 class ComputadoraCreateView(APIView):
     def get(self, request):
