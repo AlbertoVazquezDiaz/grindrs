@@ -16,7 +16,7 @@ import LoginModal from "./LoginModal";
 
 const initialNavigation = [
   { name: "Inicio", href: "/", current: true },
-  { name: "Builder", href: "#", current: false },
+  { name: "Configurador", href: "/builder", current: false },
   { name: "Contáctanos", href: "/contact", current: false },
   { name: "Registrarme", action: "openRegisterModal", current: false },
   { name: "Iniciar sesión", action: "openLoginModal", current: false },
@@ -73,7 +73,11 @@ const Megamenu = () => {
 
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex shrink-0 items-center">
-                <img alt="Grindrs logo" src="/grindr.svg" className="h-10 w-auto" />
+                <img
+                  alt="Grindrs logo"
+                  src="/grindr.svg"
+                  className="h-10 w-auto"
+                />
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
@@ -125,7 +129,7 @@ const Megamenu = () => {
                   )
                 ) : (
                   <Menu as="div" className="relative">
-                    <Menu.Button className="flex items-center text-gray-300 hover:text-yellow-400 p-2 rounded-md">
+                    <Menu.Button className="flex items-center text-gray-300 hover:text-yellow-400 p-2 rounded-md cursor-pointer">
                       <UserIcon className="h-5 w-5" />
                     </Menu.Button>
                     <Menu.Items className="absolute right-0 mt-2 w-48 bg-[#1e1e1e] border border-gray-700 rounded-md shadow-lg z-50">
@@ -134,9 +138,11 @@ const Megamenu = () => {
                           {({ active }) => (
                             <button
                               className={`${
-                                active ? "bg-gray-700 text-yellow-400" : "text-gray-300"
-                              } w-full text-left px-4 py-2 text-sm`}
-                              onClick={() => navigate("/mis-pedidos")}
+                                active
+                                  ? "bg-gray-700 text-yellow-400"
+                                  : "text-gray-300"
+                              } w-full text-left px-4 py-2 text-sm cursor-pointer`}
+                              onClick={() => navigate("/MyOrders")}
                             >
                               Mis pedidos
                             </button>
@@ -146,8 +152,10 @@ const Megamenu = () => {
                           {({ active }) => (
                             <button
                               className={`${
-                                active ? "bg-gray-700 text-red-400" : "text-red-300"
-                              } w-full text-left px-4 py-2 text-sm`}
+                                active
+                                  ? "bg-gray-700 text-red-400"
+                                  : "text-red-300"
+                              } w-full text-left px-4 py-2 text-sm cursor-pointer`}
                               onClick={() => {
                                 localStorage.clear();
                                 setIsAuthenticated(false);

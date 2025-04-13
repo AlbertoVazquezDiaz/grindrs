@@ -41,7 +41,7 @@ const Products = () => {
   const openEditModal = (component) => {
     setEditingComponent(component);
     setEditFormData({ ...component });
-    
+
     const tipo = Object.values(tiposComponentes).find(
       (t) => t.id === component.tipo_componente
     );
@@ -69,7 +69,7 @@ const Products = () => {
     });
     setPreview([]);
     setTipoComponente("");
-  }
+  };
 
   const fetchComponentes = async () => {
     try {
@@ -224,7 +224,7 @@ const Products = () => {
         certificacion: "null",
       });
     }
-  }
+  };
 
   const columns = [
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -298,7 +298,7 @@ const Products = () => {
               className="absolute top-6 right-6 text-gray-500 hover:text-black"
               onClick={() => {
                 resertForm();
-                setShowModal(false)
+                setShowModal(false);
               }}
             >
               <XMarkIcon className="h-8 w-8 font-extrabold hover:cursor-pointer" />
@@ -377,13 +377,19 @@ const Products = () => {
                     placeholder="Potencia en watts"
                     className="border px-3 py-2 rounded w-full"
                     onChange={(e) =>
-                      setFormData({ ...formData, potencia_watts: e.target.value })
+                      setFormData({
+                        ...formData,
+                        potencia_watts: e.target.value,
+                      })
                     }
                   />
                   <select
                     className="border px-3 py-2 rounded w-full"
                     onChange={(e) =>
-                      setFormData({ ...formData, certificacion: e.target.value })
+                      setFormData({
+                        ...formData,
+                        certificacion: e.target.value,
+                      })
                     }
                   >
                     <option value="">Certificación</option>
@@ -549,7 +555,9 @@ const Products = () => {
                   }
                 }}
               >
-                <option value="" className="bg-gray-800">Tipo componente</option>
+                <option value="" className="bg-gray-800">
+                  Tipo componente
+                </option>
                 {tiposComponentes.map((tipo) => (
                   <option key={tipo.id} value={tipo.id} className="bg-gray-800">
                     {tipo.nombre}
@@ -565,14 +573,20 @@ const Products = () => {
                     value={editFormData.potencia_watts || ""}
                     className="border px-3 py-2 rounded w-full"
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, potencia_watts: e.target.value })
+                      setEditFormData({
+                        ...editFormData,
+                        potencia_watts: e.target.value,
+                      })
                     }
                   />
                   <select
                     className="border px-3 py-2 rounded w-full"
                     value={editFormData.certificacion || ""}
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, certificacion: e.target.value })
+                      setEditFormData({
+                        ...editFormData,
+                        certificacion: e.target.value,
+                      })
                     }
                   >
                     <option value="">Certificación</option>
@@ -591,7 +605,10 @@ const Products = () => {
                   value={editFormData.consumo_watts || ""}
                   className="border px-3 py-2 rounded w-full"
                   onChange={(e) =>
-                    setEditFormData({ ...editFormData, consumo_watts: e.target.value })
+                    setEditFormData({
+                      ...editFormData,
+                      consumo_watts: e.target.value,
+                    })
                   }
                 />
               )}
