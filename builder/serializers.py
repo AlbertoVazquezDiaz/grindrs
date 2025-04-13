@@ -32,16 +32,37 @@ class ComponenteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CompatibilidadSerializer(serializers.ModelSerializer):
+    componente_base = serializers.PrimaryKeyRelatedField(queryset=Componente.objects.all())
+    componente_compatible = serializers.PrimaryKeyRelatedField(queryset=Componente.objects.all())
+
+    class Meta:
+        model = Compatibilidad
+        fields = ['componente_base', 'componente_compatible']
+
+class CompatibilidadReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Compatibilidad
         fields = '__all__'
+        depth = 1
 
 class multipleCompatibilidadSerializer(serializers.Serializer):
     compatibilidades = CompatibilidadSerializer(many=True)
 
     def create(self, validated_data):
         compatibilidad_data = validated_data['compatibilidades']
-        return Compatibilidad.objects.bulk_create([Compatibilidad(**data) for data in compatibilidad_data])
+
+        objetos = []
+
+        for data in compatibilidad_data:
+            base = data["componente_base"]
+            compatible = data["componente_compatible"]
+
+            objetos.append(Compatibilidad(
+                componente_base=base,
+                componente_compatible=compatible
+            ))
+        
+        return Compatibilidad.objects.bulk_create(objetos)
 
 class DetalleComputadoraSerializer(serializers.ModelSerializer):
     class Meta:

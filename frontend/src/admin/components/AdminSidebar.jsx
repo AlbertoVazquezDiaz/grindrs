@@ -6,6 +6,7 @@ import {
   ChartBarSquareIcon,
   ArrowRightOnRectangleIcon,
   ComputerDesktopIcon,
+  LinkIcon
 } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
 import useLogout from "../../../hooks/useLogout";
@@ -29,6 +30,11 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
       label: "Productos",
       to: "/admin/products",
       icon: <ComputerDesktopIcon className="w-6 h-6" />,
+    },
+    {
+      label: "Compatibilidades",
+      to: "/admin/compatibilities",
+      icon: <LinkIcon className="w-6 h-6" />,
     },
     {
       label: "Ajustes",

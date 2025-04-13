@@ -7,6 +7,7 @@ import ProductView from './pages/ProductView';
 import AdminLayout from "./layouts/AdminLayout";
 import Dashboard from "./admin/pages/Dashboard";
 import Products from "./admin/pages/Products";
+import Compatibility from "./admin/pages/Compatibility";
 import Users from "./admin/pages/Users";
 import Settings from "./admin/pages/Settings";
 import ProtectedRoute from "./admin/components/ProtectedRoute"; 
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
           { path: "products", element: <Products /> },
           { path: "users", element: <Users /> },
           { path: "settings", element: <Settings /> },
+          { path: "compatibilities", element: <Compatibility /> }, // Cambia esto por la página de compatibilidades
         ]
       }
     ]
