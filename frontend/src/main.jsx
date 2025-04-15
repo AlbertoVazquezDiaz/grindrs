@@ -5,22 +5,24 @@ import router from "./router";
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import 'react-confirm-alert/src/react-confirm-alert.css';
-
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { BuilderProvider } from "./context/BuilderContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
-    <ToastContainer
-      position="top-right"
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="dark"
-    />
+    <BuilderProvider>
+      <RouterProvider router={router} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </BuilderProvider>
   </StrictMode>
 );
