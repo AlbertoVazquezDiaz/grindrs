@@ -121,6 +121,22 @@ const Products = () => {
     setPreview(newpreviews);
   };
 
+  const [displayPrecio, setDisplayPrecio] = useState("");
+
+  const formatNumber = (value) => {
+    return new Intl.NumberFormat("es-MX").format(value);
+  };
+
+  const handlePrecioChange = (e) => {
+    const rawValue = e.target.value.replace(/,/g, ""); 
+    const numberValue = Number(rawValue);
+
+    if (!isNaN(numberValue)) {
+      setDisplayPrecio(formatNumber(numberValue));
+      setFormData({ ...formData, precio: numberValue });
+    }
+  };
+
   const handleDeleteComponent = (id) => {
     confirmAlert({
       customUI: ({ onClose }) => {
@@ -293,7 +309,7 @@ const Products = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-8">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full relative p-12">
+          <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full relative p-12">
             <button
               className="absolute top-6 right-6 text-gray-500 hover:text-black"
               onClick={() => {
@@ -303,12 +319,49 @@ const Products = () => {
             >
               <XMarkIcon className="h-8 w-8 font-extrabold hover:cursor-pointer" />
             </button>
-            <h2 className="text-xl font-semibold mb-4">Registrar Componente</h2>
+            <h2 className="text-xl font-semibold mb-4 text-white">
+              Agregar componente
+            </h2>
             <form
               onSubmit={handleSubmit}
-              className="flex flex-wrap gap-3"
+              className="flex flex-wrap gap-3 text-gray-300"
               encType="multipart/form-data"
             >
+              <select
+                className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-300 border-white"
+                value={formData.tipo_componente}
+                onChange={handleChange}
+              >
+                <option value="null">Tipo componente</option>
+                {tiposComponentes.map((tipo) => (
+                  <option key={tipo.id} value={tipo.id}>
+                    {tipo.nombre}
+                  </option>
+                ))}
+              </select>
+
+              {tipoComponente !== "Procesador" ? (
+                <input
+                  type="text"
+                  placeholder="Marca"
+                  className="border px-3 py-2 rounded w-full"
+                  onChange={(e) =>
+                    setFormData({ ...formData, marca: e.target.value })
+                  }
+                />
+              ) : (
+                <select
+                  className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-300 border-white"
+                  onChange={(e) =>
+                    setFormData({ ...formData, marca: e.target.value })
+                  }
+                >
+                  <option value="">Selecciona la marca</option>
+                  <option value="AMD">AMD</option>
+                  <option value="Intel">Intel</option>
+                </select>
+              )}
+
               <input
                 type="text"
                 placeholder="Nombre"
@@ -317,14 +370,7 @@ const Products = () => {
                   setFormData({ ...formData, nombre: e.target.value })
                 }
               />
-              <input
-                type="text"
-                placeholder="Marca"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, marca: e.target.value })
-                }
-              />
+
               <input
                 type="text"
                 placeholder="Modelo"
@@ -342,12 +388,11 @@ const Products = () => {
                 }
               />
               <input
-                type="number"
+                type="text"
                 placeholder="Precio"
+                value={displayPrecio}
                 className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, precio: e.target.value })
-                }
+                onChange={handlePrecioChange}
               />
               <input
                 type="number"
@@ -357,18 +402,6 @@ const Products = () => {
                   setFormData({ ...formData, stock: e.target.value })
                 }
               />
-              <select
-                className="border px-3 py-2 rounded w-full"
-                value={formData.tipo_componente}
-                onChange={handleChange}
-              >
-                <option value="null">Tipo componente</option>
-                {tiposComponentes.map((tipo) => (
-                  <option key={tipo.id} value={tipo.id}>
-                    {tipo.nombre}
-                  </option>
-                ))}
-              </select>
 
               {tipoComponente === "Fuente de poder" ? (
                 <>
@@ -384,7 +417,7 @@ const Products = () => {
                     }
                   />
                   <select
-                    className="border px-3 py-2 rounded w-full"
+                    className="appearance-none border px-3 py-2 rounded w-full  focus:outline-none "
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -419,7 +452,7 @@ const Products = () => {
                   setFormData({ ...formData, tipo_componente: e.target.value })
                 }
               />*/}
-              <label className="cursor-pointer w-full bg-white border-dashed border-2 border-yellow-400 px-4 py-3 rounded text-gray-700 text-center">
+              <label className="cursor-pointer w-full border-dashed border-2 border-yellow-400 px-4 py-3 rounded text-white text-center">
                 <PhotoIcon className="w-6 h-6 mx-auto mb-2" />
                 Subir imagen
                 <input
@@ -527,7 +560,7 @@ const Products = () => {
               ))}
 
               <select
-                className="border px-3 py-2 rounded w-full"
+                className="appearance-none border px-3 py-2 rounded w-full focus:outline-none "
                 value={editFormData.tipo_componente}
                 onChange={(e) => {
                   const selectedId = e.target.value;
@@ -580,7 +613,7 @@ const Products = () => {
                     }
                   />
                   <select
-                    className="border px-3 py-2 rounded w-full"
+                    className="appearance-none border px-3 py-2 rounded w-full bg-white text-black focus:outline-none "
                     value={editFormData.certificacion || ""}
                     onChange={(e) =>
                       setEditFormData({

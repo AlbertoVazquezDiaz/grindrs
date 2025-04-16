@@ -1,60 +1,52 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 
-const StepSection = ({ step, selected, onSelect }) => {
-  const [isOpen, setIsOpen] = useState(!selected); // abierto si no ha sido seleccionado
+const StepSection = ({ step, isOpen, selected, onSelect }) => {
+  const [isExpanded, setIsExpanded] = useState(isOpen);
 
-  const handleSelect = (value) => {
-    onSelect(step.id, value);
-    setIsOpen(false); // cerrar al seleccionar
+  useEffect(() => {
+    if (isOpen && !selected) {
+      setIsExpanded(true);
+    }
+  }, [isOpen, selected]);
+
+  const handleToggle = () => {
+    setIsExpanded((prev) => !prev);
   };
 
   return (
-    <div className="mb-6 border border-gray-700 rounded-md bg-[#1a1a1a] p-4">
-      <div
-        className="flex justify-between items-center cursor-pointer"
-        onClick={() => setIsOpen((prev) => !prev)}
+    <div className="mb-4 border border-gray-700 rounded bg-[#111] text-white">
+      <button
+        onClick={handleToggle}
+        className="w-full flex justify-between items-center px-4 py-3 bg-black text-yellow-400 text-sm font-bold uppercase tracking-wide"
       >
-        <h2 className="text-lg font-semibold text-yellow-400">
-          {step.title}
-        </h2>
-        {isOpen ? (
-          <ChevronUpIcon className="w-5 h-5 text-gray-300" />
-        ) : (
-          <ChevronDownIcon className="w-5 h-5 text-gray-300" />
-        )}
-      </div>
+        {step.title}
+        <span>{isExpanded ? "▲" : "▼"}</span>
+      </button>
 
-      {selected && !isOpen && (
-        <div className="mt-2 text-sm text-gray-300">
-          Seleccionado:{" "}
-          <span className="text-yellow-300">{selected.name}</span>
-        </div>
-      )}
-
-      {isOpen && (
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      {isExpanded && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
           {step.options.map((option) => (
-            <button
-              key={option.id}
-              onClick={() => handleSelect(option)}
-              className={`border rounded-md p-4 transition text-gray-200 hover:border-yellow-400 ${
-                selected?.id === option.id
-                  ? "border-yellow-400 bg-gray-800"
-                  : "border-gray-600"
+            <div
+              key={option.value}
+              onClick={() => {
+                onSelect(step.id, option.value);
+                setIsExpanded(false); // cerrar al seleccionar
+              }}
+              className={`flex flex-col items-center justify-center p-4 border rounded transition duration-200 cursor-pointer ${
+                selected === option.value
+                  ? "border-yellow-400"
+                  : "border-gray-600 hover:border-yellow-500"
               }`}
             >
-              <img
-                src={
-                  option.image?.startsWith("data:image")
-                    ? option.image
-                    : `data:image/jpeg;base64,${option.image}`
-                }
-                alt={option.name}
-                className="w-full h-20 object-contain mb-2"
-              />
-              <p className="text-sm text-center">{option.name}</p>
-            </button>
+              {option.image && (
+                <img
+                  src={option.image}
+                  alt={option.name}
+                  className="w-20 h-20 object-contain mb-2"
+                />
+              )}
+              <p className="text-sm text-center text-white">{option.name}</p>
+            </div>
           ))}
         </div>
       )}
