@@ -12,6 +12,7 @@ import Users from "./admin/pages/Users";
 import Settings from "./admin/pages/Settings";
 import ProtectedRoute from "./admin/components/ProtectedRoute"; 
 import ResetPassword from "./pages/ResetPassword";
+import CartPage from "./pages/cart";
 import Builder from "./pages/Builder";
 
 const router = createBrowserRouter([
@@ -34,6 +35,13 @@ const router = createBrowserRouter([
     element: <BlackLayout />,
     children: [
       { path: "/builder", element: <Builder /> },
+    ]
+  },
+  {
+    path: "/cart",
+    element: <BlackLayout />,
+    children: [
+      { path: "/cart", element: <CartPage /> },
     ]
   },
   {

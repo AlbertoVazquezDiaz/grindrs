@@ -133,6 +133,7 @@ class LoginJWTView(APIView):
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
                 'correo': user.correo,
+                'id': user.id,
                 'rol': rol_completo
             })
         else:
