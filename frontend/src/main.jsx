@@ -6,11 +6,14 @@ import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { CartProvider } from "./contexts/contexts";
 
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
     <ToastContainer
       position="top-right"
       autoClose={3000}

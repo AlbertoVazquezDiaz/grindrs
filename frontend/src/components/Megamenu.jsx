@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Disclosure,
@@ -13,6 +13,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import LoginModal from "./LoginModal";
+import { CartContext } from "../contexts/contexts";
 
 const initialNavigation = [
   { name: "Inicio", href: "/", current: true },
@@ -30,9 +31,13 @@ const Megamenu = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [navigation, setNavigation] = useState(initialNavigation);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, setIsAuthenticated, cartItems, setCartItems } = useContext(CartContext);
+  //const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  //const { cartItems } = useContext(CartContext);
+  //const { setCartItems } = useContext(CartContext);
+
 
   useEffect(() => {
     const updatedNavigation = initialNavigation.map((item) => ({
@@ -133,9 +138,8 @@ const Megamenu = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <button
-                              className={`${
-                                active ? "bg-gray-700 text-yellow-400" : "text-gray-300"
-                              } w-full text-left px-4 py-2 text-sm`}
+                              className={`${active ? "bg-gray-700 text-yellow-400" : "text-gray-300"
+                                } w-full text-left px-4 py-2 text-sm`}
                               onClick={() => navigate("/mis-pedidos")}
                             >
                               Mis pedidos
@@ -145,11 +149,11 @@ const Megamenu = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <button
-                              className={`${
-                                active ? "bg-gray-700 text-red-400" : "text-red-300"
-                              } w-full text-left px-4 py-2 text-sm`}
+                              className={`${active ? "bg-gray-700 text-red-400" : "text-red-300"
+                                } w-full text-left px-4 py-2 text-sm`}
                               onClick={() => {
                                 localStorage.clear();
+                                setCartItems([]);
                                 setIsAuthenticated(false);
                                 window.dispatchEvent(new Event("authChange"));
                                 navigate("/");
@@ -164,8 +168,30 @@ const Megamenu = () => {
                   </Menu>
                 )}
 
-                <button className="text-gray-300 hover:text-yellow-400 rounded-md px-3 py-2 text-sm font-medium cursor-pointer">
+                <button
+                  onClick={() => {
+                    if (!isAuthenticated) {
+                      setIsRegisterMode(false);
+                      setIsModalOpen(true);
+                    } else {
+                      navigate("/cart");
+                    }
+                  }}
+                  className="text-gray-300 hover:text-yellow-400 rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
+                >
                   <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
+                  {cartItems.reduce((acc, item) => acc + item.quantity, 0) > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold rounded-full px-1.5 py-0.5">
+                      {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+                    </span>
+                  )}
+
+                  {/*{cartItems.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold rounded-full px-1.5 py-0.5">
+                      {cartItems.length}
+                    </span>
+                  )}*/}
+
                 </button>
               </div>
             </div>
