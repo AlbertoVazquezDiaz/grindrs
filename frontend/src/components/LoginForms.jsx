@@ -26,9 +26,9 @@ const LoginForms = ({ switchToRegister, switchToForgot, closeModal }) => {
       const response = await api.post("login/", { correo, password });
       toast.success("Bienvenido");
 
-      const { access, refresh, correo: userCorreo, rol } = response.data;
+      const { access, refresh, correo: userCorreo, rol, id } = response.data;
 
-      localStorage.setItem("user", JSON.stringify({ correo: userCorreo, rol }));
+      localStorage.setItem("user", JSON.stringify({id: id, correo: userCorreo, rol }));
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
 

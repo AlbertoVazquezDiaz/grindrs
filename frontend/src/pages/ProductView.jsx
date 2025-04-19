@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../API/axiosConfig";
 import ImageGallery from "react-image-gallery";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import "react-image-gallery/styles/css/image-gallery.css";
+import { CartContext } from "../contexts/contexts";
+import { toast } from 'react-toastify';
 
 const ProductView = () => {
+  const { isAuthenticated, addToCart, cartItems, decreaseFromCart } = useContext(CartContext);
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -42,6 +45,16 @@ const ProductView = () => {
     );
   }
 
+  const existingItem = cartItems.find((item) => item.id === product.id);
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      toast.error('Inicia sesion primero')
+    } else {
+      addToCart(product);
+    }
+  };
+
   const images = ["imagen1", "imagen2", "imagen3", "imagen4", "imagen5"]
     .map((key) => product[key])
     .filter((url) => !!url)
@@ -77,12 +90,49 @@ const ProductView = () => {
           <p className="text-2xl font-semibold text-yellow-400">${product.precio}</p>
           <p className="text-sm text-gray-300">{product.stock > 0 ? `Stock disponible: ${product.stock}` : "Agotado"}</p>
 
-          <button className="relative hover:cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded w-full sm:w-auto overflow-hidden group transition duration-300 flex items-center justify-center gap-2">
+          {existingItem && existingItem.quantity > 0 ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  decreaseFromCart(Number(productId));
+                }}
+                className="bg-red-500 text-white px-2 py-1 rounded"
+              >
+                -
+              </button>
+              <span className="text-white">{existingItem.quantity}</span>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart(product);
+                }}
+                className="bg-green-500 text-white px-2 py-1 rounded"
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className="relative hover:cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded w-full sm:w-auto overflow-hidden group transition duration-300 flex items-center justify-center gap-2"
+            >
+              Agregar al carrito
+              <span className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
+                <ShoppingBagIcon className="w-5 h-5 text-black" />
+              </span>
+            </button>
+          )}
+
+          {/*<button
+            onClick={handleAddToCart}
+            className="relative hover:cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded w-full sm:w-auto overflow-hidden group transition duration-300 flex items-center justify-center gap-2"
+          >
             Agregar al carrito
             <span className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
               <ShoppingBagIcon className="w-5 h-5 text-black" />
             </span>
-          </button>
+          </button>*/}
 
           <div className="mt-6">
             <h2 className="text-lg font-semibold text-white mb-2">Descripción</h2>

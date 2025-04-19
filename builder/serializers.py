@@ -109,8 +109,8 @@ class ComputadoraSerializer(serializers.ModelSerializer):
 
 class DetalleVentaSerializer(serializers.ModelSerializer):
     class Meta:
-        model: DetalleVenta
-        fields: ['computadora', 'componente', 'cantidad', 'subtotal']
+        model = DetalleVenta
+        fields = ['computadora', 'componente', 'cantidad', 'subtotal']
 
 class VentaSerializer(serializers.ModelSerializer):
     detalles = DetalleVentaSerializer(many=True)
