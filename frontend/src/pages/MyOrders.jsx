@@ -9,14 +9,14 @@ const MyOrders = () => {
   const [computadorasMap, setComputadorasMap] = useState({});
 
   const token = localStorage.getItem("token");
-
+  const user = JSON.parse(localStorage.getItem("user")); 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setIsLoading(true);
 
         const [ventasRes, compRes, pcRes] = await Promise.all([
-          api.get("ventas/", {
+          api.get(`ventas/?usuario=${user.id}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           api.get("componente/"),
@@ -64,7 +64,7 @@ const MyOrders = () => {
                 Orden #{order.id}
               </h2>
               <p className="text-sm text-gray-400 mb-2">
-                Fecha: {new Date(order.fecha).toLocaleDateString()}
+                Fecha: {new Date(order.fecha_venta).toLocaleDateString("es-MX")}
               </p>
               <p className="text-gray-300 mb-4 font-bold">
                 Total: ${Number(order.total).toLocaleString("es-MX")}
@@ -74,11 +74,19 @@ const MyOrders = () => {
                 {order.detalles.map((item, i) => {
                   const compu = computadorasMap[item.computadora];
                   const comp = componentesMap[item.componente];
-                  const nombre = compu?.nombre || comp?.nombre || "Producto desconocido";
+                  const nombre =
+                    compu?.nombre || comp?.nombre || "Producto desconocido";
+                  const tipo = comp
+                    ? comp.tipo_componente?.nombre || "Componente"
+                    : "Computadora";
+
                   return (
-                    <li key={i} className="flex justify-between border-b border-gray-600 pb-1">
+                    <li
+                      key={i}
+                      className="flex justify-between border-b border-gray-600 pb-1"
+                    >
                       <span>
-                        {nombre}{" "}
+                        {tipo}: {nombre}{" "}
                         <span className="text-gray-400">x{item.cantidad}</span>
                       </span>
                       <span className="text-gray-300 font-semibold">
