@@ -205,6 +205,18 @@ class ComputadoraChangeView(APIView):
         return Response({"message": "Computadora eliminada exitosamente"}, status=status.HTTP_204_NO_CONTENT)
 
 class VentaCreteView(APIView):
+
+    def get(self, request):
+        usuario_id = request.query_params.get('usuario')
+
+        if usuario_id:
+            ventas = Venta.objects.filter(usuario__id=usuario_id)
+        else:
+            ventas = Venta.objects.all()
+
+        serializer = VentaSerializer(ventas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def post(self, request):
         serializer = VentaSerializer(data=request.data)
 
