@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import api from "../API/axiosConfig";
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, onFilter }) => {
   const sidebarRef = useRef(null);
-  const [tiposComponentes, setTiposComponentes] = useState([])
+  const [tiposComponentes, setTiposComponentes] = useState([]);
 
   const fetchTipos = async () => {
-    const response = await api.get("tipoComponente/")
+    const response = await api.get("tipoComponente/");
     setTiposComponentes(response.data);
-  }
+  };
 
   useEffect(() => {
     fetchTipos();
@@ -33,7 +33,6 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Backdrop (solo en móviles y si está abierto) */}
       {isOpen && (
         <div
           onClick={onClose}
@@ -50,11 +49,21 @@ const Sidebar = ({ isOpen, onClose }) => {
       >
         <h2 className="text-lg font-semibold mb-4">Filtrar por categoría</h2>
         <ul className="space-y-2">
+          <li
+            onClick={() => {
+              onFilter(null);
+              if (window.innerWidth < 768) onClose();
+            }}
+            className="cursor-pointer p-2 rounded hover:bg-white/10 hover:text-yellow-400 transition"
+          >
+            Todos los productos
+          </li>
+
           {tiposComponentes.map((tipo) => (
             <li
               key={tipo.id}
               onClick={() => {
-                console.log(`Filtrar: ${tipo}`);
+                onFilter(tipo.id);
                 if (window.innerWidth < 768) onClose();
               }}
               className="cursor-pointer p-2 rounded hover:bg-white/10 hover:text-yellow-400 transition"
