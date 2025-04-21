@@ -9,69 +9,30 @@ import autoTable from "jspdf-autotable";
 const CartPage = () => {
   const {
     cartItems,
+    addToCart,
+    decreaseFromCart,
+    removeFromCart,
     clearCart,
     totalPrice,
-    decreaseFromCart,
-    addToCart,
-    removeFromCart,
   } = useContext(CartContext);
-  const [loading, setLoading] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [loading, setLoading] = useState(false);
 
-  const componentes = cartItems.filter((item) => item.tipo === "componente");
   const computadoras = cartItems.filter((item) => item.tipo === "computadora");
+  const componentes = cartItems.filter((item) => item.tipo === "componente");
+
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const generatePDF = (items) => {
-    const doc = new jsPDF();
-    doc.setFontSize(20);
-    doc.setTextColor(255, 204, 0);
-    doc.text("Resumen de tu compra", 20, 20);
-
-    const body = items.map((item) => [
-      item.tipo === "computadora"
-        ? "PC Personalizada"
-        : item.nombre || item.name,
-      item.quantity,
-      `$${Number(item.price || item.precio).toLocaleString("es-MX")}`,
-    ]);
-
-    autoTable(doc, {
-      startY: 30,
-      head: [["Producto", "Cantidad", "Precio"]],
-      body,
-      theme: "striped",
-      styles: {
-        fontSize: 10,
-        textColor: 20,
-      },
-      headStyles: {
-        fillColor: [255, 204, 0],
-        textColor: 0,
-      },
-    });
-
-    doc.setFontSize(12);
-    doc.text(
-      `Total pagado: $${Number(totalPrice).toLocaleString("es-MX")}`,
-      20,
-      doc.lastAutoTable.finalY + 10
-    );
-
-    doc.save("Resumen-de-compra.pdf");
-  };
-
-  const handlePDFCheckout = async () => {
+  const handleDownloadPDF = async () => {
     if (!token || !user) {
       toast.error("Debes iniciar sesión para generar el PDF.");
       return;
     }
 
-    try {
-      setLoading(true);
-      const detallesVenta = [];
+    const detallesVenta = [];
 
+    try {
       for (const compu of computadoras) {
         const compuData = {
           nombre: compu.nombre,
@@ -106,11 +67,75 @@ const CartPage = () => {
       });
 
       toast.success("Venta registrada con éxito");
-      clearCart();
       generatePDF(cartItems);
+      clearCart();
     } catch (error) {
-      toast.error("Error al registrar la venta.");
       console.error(error);
+      toast.error("Error al registrar la venta.");
+    }
+  };
+
+  const generatePDF = (items) => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.setTextColor(255, 204, 0);
+    doc.text("Resumen de tu compra", 20, 20);
+
+    const body = items.map((item) => [
+      item.tipo === "computadora"
+        ? "PC Personalizada"
+        : item.nombre || item.name,
+      item.quantity,
+      `$${Number(item.price || item.precio).toLocaleString("es-MX")}`,
+    ]);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [["Producto", "Cantidad", "Precio"]],
+      body,
+      theme: "striped",
+      styles: { fontSize: 10, textColor: 20 },
+      headStyles: { fillColor: [255, 204, 0], textColor: 0 },
+    });
+
+    doc.setFontSize(12);
+    doc.text(
+      `Total pagado: $${Number(totalPrice).toLocaleString("es-MX")}`,
+      20,
+      doc.lastAutoTable.finalY + 10
+    );
+
+    doc.save("Resumen-de-compra.pdf");
+  };
+
+  const handleSimplePurchase = async () => {
+    if (!user || !token) {
+      toast.error("Inicia sesión primero");
+      return;
+    }
+
+    const detalles = componentes.map((item) => ({
+      componente: item.id,
+      cantidad: item.quantity,
+      subtotal: item.price * item.quantity,
+    }));
+
+    const ventaData = {
+      usuario: user.id,
+      total: totalPrice,
+      detalles,
+    };
+
+    try {
+      setLoading(true);
+      await api.post("ventas/", ventaData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Compra realizada con éxito");
+      clearCart();
+    } catch (error) {
+      console.error(error);
+      toast.error("Hubo un error al procesar tu compra");
     } finally {
       setLoading(false);
     }
@@ -129,43 +154,22 @@ const CartPage = () => {
       ) : (
         <div className="grid gap-6">
           {computadoras.map((item, i) => (
-            <div
-              key={`compu-${i}`}
-              className="bg-[#2d2d2d] p-4 rounded-lg shadow-lg relative"
-            >
-              <button
-                onClick={() => removeFromCart(item.id)}
-                className="absolute top-2 right-2 text-red-400 hover:text-red-600"
-                title="Eliminar del carrito"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+            <div key={i} className="bg-[#2d2d2d] p-4 rounded-lg shadow-lg">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-yellow-400">
+                  {item.nombre}
+                </h2>
+                <button
+                  onClick={() => removeFromCart(item.id)}
+                  className="text-red-400 hover:text-red-600"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-
-              <h2 className="text-xl font-semibold text-yellow-400">
-                {item.nombre}
-              </h2>
+                  Eliminar
+                </button>
+              </div>
               <p className="text-gray-400">
-                Precio: $
-                {item.precio.toLocaleString("es-MX", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                Precio: ${item.precio.toLocaleString("es-MX")}
               </p>
-
-              {item.componentes?.length > 0 ? (
+              {item.componentes?.length > 0 && (
                 <>
                   <p className="text-gray-300 font-bold mt-2">Componentes:</p>
                   <ul className="text-gray-400 text-sm list-disc list-inside">
@@ -176,10 +180,6 @@ const CartPage = () => {
                     ))}
                   </ul>
                 </>
-              ) : (
-                <p className="text-gray-500 text-sm italic">
-                  Sin componentes definidos
-                </p>
               )}
             </div>
           ))}
@@ -200,19 +200,14 @@ const CartPage = () => {
                   className="w-full h-40 object-cover rounded"
                 />
               </Link>
+
               <div className="flex flex-col justify-between flex-grow">
                 <Link to={`/ProductView/${item.id}`}>
                   <h2 className="text-xl font-semibold text-yellow-400">
                     {item.name}
                   </h2>
                 </Link>
-                <p className="text-gray-400">
-                  Precio: $
-                  {item.price.toLocaleString("es-MX", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </p>
+                <p className="text-gray-400">Precio: ${item.price}</p>
                 <div className="flex items-center gap-2 mt-2">
                   <button
                     onClick={() => decreaseFromCart(item.id)}
@@ -240,26 +235,25 @@ const CartPage = () => {
             <h2 className="text-2xl font-semibold mt-2">
               Total a pagar:{" "}
               <span className="text-yellow-400">
-                $
-                {totalPrice.toLocaleString("es-MX", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                ${totalPrice.toLocaleString("es-MX")}
               </span>
             </h2>
 
             {computadoras.length > 0 ? (
               <button
-                onClick={handlePDFCheckout}
+                onClick={handleDownloadPDF}
+                className="mt-4 bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-400 transition"
+              >
+                Descargar PDF (Registrar venta)
+              </button>
+            ) : (
+              <button
+                onClick={handleSimplePurchase}
                 disabled={loading}
                 className="mt-4 bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-400 transition"
               >
-                {loading ? "Generando PDF..." : "Proceder al pago"}
+                {loading ? "Procesando..." : "Proceder al Pago"}
               </button>
-            ) : (
-              <p className="text-gray-400 mt-4">
-                No se puede generar PDF sin computadoras armadas.
-              </p>
             )}
           </div>
         </div>
