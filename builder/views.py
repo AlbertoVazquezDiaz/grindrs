@@ -176,7 +176,7 @@ class ComputadoraCreateView(APIView):
             computadora = serializer.save()
             return Response({
                 "message": "Computadora creada exitosamente",
-                "computadoira_id": computadora.id
+                "computadora_id": computadora.id
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -56,6 +56,15 @@ const CartPage = () => {
         });
       }
 
+      for (const item of componentes) {
+        detallesVenta.push({
+          computadora: null,
+          componente: item.id,
+          cantidad: item.quantity,
+          subtotal: item.price * item.quantity,
+        });
+      }
+
       const ventaData = {
         usuario: user.id,
         total: totalPrice,
