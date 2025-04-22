@@ -45,7 +45,7 @@ const MyOrders = () => {
 
   return (
     <div className="p-8 min-h-screen bg-[#1e1e1e] text-white">
-      <h1 className="text-3xl font-bold text-yellow-400 mb-6">Mis órdenes</h1>
+      <h1 className="text-3xl font-bold text-yellow-400 mb-6">Historial de compras</h1>
 
       {isLoading ? (
         <div className="flex justify-center py-10">

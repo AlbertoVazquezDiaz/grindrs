@@ -12,7 +12,7 @@ import Users from "./admin/pages/Users";
 import Settings from "./admin/pages/Settings";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 import ResetPassword from "./pages/ResetPassword";
-import CartPage from "./pages/cart";
+import CartPage from "./pages/CartPage";
 import Builder from "./pages/Builder";
 import MyOrders from "./pages/MyOrders";
 

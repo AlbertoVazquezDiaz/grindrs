@@ -5,10 +5,11 @@ import ImageGallery from "react-image-gallery";
 import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { CartContext } from "../contexts/contexts";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const ProductView = () => {
-  const { isAuthenticated, addToCart, cartItems, decreaseFromCart } = useContext(CartContext);
+  const { isAuthenticated, addToCart, cartItems, decreaseFromCart } =
+    useContext(CartContext);
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -26,7 +27,9 @@ const ProductView = () => {
     const fetchRelated = async () => {
       try {
         const res = await api.get("componente/");
-        const related = res.data.filter((p) => p.id !== parseInt(productId)).slice(0, 4);
+        const related = res.data
+          .filter((p) => p.id !== parseInt(productId))
+          .slice(0, 4);
         setRelatedProducts(related);
       } catch (err) {
         console.error("Error al obtener productos relacionados:", err);
@@ -49,8 +52,7 @@ const ProductView = () => {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      toast.error('Inicia sesión primero')
-  
+      toast.error("Inicia sesión primero");
     } else {
       addToCart(product);
     }
@@ -60,8 +62,12 @@ const ProductView = () => {
     .map((key) => product[key])
     .filter((url) => !!url)
     .map((url) => ({
-      original: url.startsWith("data:image") ? url : `data:image/jpeg;base64,${url}`,
-      thumbnail: url.startsWith("data:image") ? url : `data:image/jpeg;base64,${url}`,
+      original: url.startsWith("data:image")
+        ? url
+        : `data:image/jpeg;base64,${url}`,
+      thumbnail: url.startsWith("data:image")
+        ? url
+        : `data:image/jpeg;base64,${url}`,
     }));
 
   return (
@@ -85,11 +91,28 @@ const ProductView = () => {
         </div>
 
         <div className="flex flex-col gap-4 w-full max-w-full">
-          <h1 className="text-3xl font-bold text-yellow-400">{product.nombre}</h1>
-          <p className="text-base">Marca: <span className="font-medium text-white">{product.marca}</span></p>
-          <p className="text-base">Modelo: <span className="font-medium text-white">{product.modelo}</span></p>
-          <p className="text-2xl font-semibold text-yellow-400">${product.precio}</p>
-          <p className="text-sm text-gray-300">{product.stock > 0 ? `Stock disponible: ${product.stock}` : "Agotado"}</p>
+          <h1 className="text-3xl font-bold text-yellow-400">
+            {product.nombre}
+          </h1>
+          <p className="text-base">
+            Marca:{" "}
+            <span className="font-medium text-white">{product.marca}</span>
+          </p>
+          <p className="text-base">
+            Modelo:{" "}
+            <span className="font-medium text-white">{product.modelo}</span>
+          </p>
+          <p className="text-2xl font-semibold text-yellow-400">
+            {Number(product.precio).toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            })}
+          </p>
+          <p className="text-sm text-gray-300">
+            {product.stock > 0
+              ? `Stock disponible: ${product.stock}`
+              : "Agotado"}
+          </p>
 
           {existingItem && existingItem.quantity > 0 ? (
             <div className="flex items-center gap-2">
@@ -125,20 +148,13 @@ const ProductView = () => {
             </button>
           )}
 
-          {/*<button
-            onClick={handleAddToCart}
-            className="relative hover:cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded w-full sm:w-auto overflow-hidden group transition duration-300 flex items-center justify-center gap-2"
-          >
-            Agregar al carrito
-            <span className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
-              <ShoppingBagIcon className="w-5 h-5 text-black" />
-            </span>
-          </button>*/}
-
           <div className="mt-6">
-            <h2 className="text-lg font-semibold text-white mb-2">Descripción</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">
+              Descripción
+            </h2>
             <p className="text-gray-300 text-sm leading-relaxed">
-              {product.descripcion || "Este producto no tiene una descripción detallada disponible."}
+              {product.descripcion ||
+                "Este producto no tiene una descripción detallada disponible."}
             </p>
           </div>
         </div>
@@ -146,7 +162,9 @@ const ProductView = () => {
 
       {relatedProducts.length > 0 && (
         <div className="mt-20 w-full max-w-screen-xl mx-auto">
-          <h2 className="text-2xl font-semibold mb-6 text-yellow-400">Productos Relacionados</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-yellow-400">
+            Productos Relacionados
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {relatedProducts.map((rp) => (
               <Link
@@ -155,14 +173,27 @@ const ProductView = () => {
                 className="bg-[#2D2D2D] border border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-yellow-500 transition"
               >
                 <img
-                  src={rp.imagen1?.startsWith("data:image") ? rp.imagen1 : `data:image/jpeg;base64,${rp.imagen1}`}
+                  src={
+                    rp.imagen1?.startsWith("data:image")
+                      ? rp.imagen1
+                      : `data:image/jpeg;base64,${rp.imagen1}`
+                  }
                   alt={rp.nombre}
                   className="w-full h-40 object-cover"
                 />
                 <div className="p-4">
-                  <h3 className="text-sm font-medium text-white truncate">{rp.nombre}</h3>
-                  <p className="text-sm text-gray-300">{rp.marca} - {rp.modelo}</p>
-                  <p className="text-sm text-yellow-400 font-semibold mt-1">${rp.precio}</p>
+                  <h3 className="text-sm font-medium text-white truncate">
+                    {rp.nombre}
+                  </h3>
+                  <p className="text-sm text-gray-300">
+                    {rp.marca} - {rp.modelo}
+                  </p>
+                  <p className="text-sm text-yellow-400 font-semibold mt-1">
+                    {Number(rp.precio).toLocaleString("es-MX", {
+                      style: "currency",
+                      currency: "MXN",
+                    })}
+                  </p>
                 </div>
               </Link>
             ))}

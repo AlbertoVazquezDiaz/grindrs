@@ -44,10 +44,13 @@ export const CartProvider = ({ children }) => {
             toast.error("Debes iniciar sesión para agregar al carrito");
             return;
         }
-
-        const price = Number(item.precio || item.price || 0); // soporte para ambos campos
+    
+        const price = Number(item.precio || item.price || 0); 
         const name = item.nombre || item.name || "Producto";
-
+        const image = item.imagen1 || item.image || null;
+        const marca = item.marca || "";
+        const modelo = item.modelo || "";
+    
         setCartItems((prevItems) => {
             const existing = prevItems.find(p => p.id === item.id && p.tipo === 'componente');
             if (existing) {
@@ -57,12 +60,25 @@ export const CartProvider = ({ children }) => {
                         : p
                 );
             } else {
-                return [...prevItems, { ...item, price, quantity: 1, tipo: 'componente' }];
+                return [
+                    ...prevItems,
+                    {
+                        ...item,
+                        price,
+                        name,
+                        image,
+                        marca,
+                        modelo,
+                        quantity: 1,
+                        tipo: 'componente',
+                    }
+                ];
             }
         });
-
+    
         toast.success(`${name} agregado al carrito`);
     };
+    
 
     const addComputerToCart = (computer) => {
         if (!isAuthenticated) {

@@ -57,7 +57,9 @@ const ProductCard = ({ product }) => {
           <p className="text-gray-400 text-sm line-clamp-2">
             {product.detail || "Sin detalles"}
           </p>
-          <p className="text-lg font-bold text-gray-200">${product.price}</p>
+          <p className="text-lg font-bold text-gray-200">
+            {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(product.price)}
+          </p>
         </div>
 
         <div className="flex justify-between items-center px-4 pb-4">
@@ -97,15 +99,6 @@ const ProductCard = ({ product }) => {
               <ShoppingCartIcon className="w-5 h-5" />
             </button>
           )}
-
-
-
-          {/*<button
-            onClick={handleAddToCart}
-            className="bg-[#FFBB00] hover:bg-yellow-500 px-3 py-2 rounded-full cursor-pointer flex items-center justify-center"
-          >
-            <ShoppingCartIcon className="w-5 h-5 self-center" />
-          </button>*/}
         </div>
 
         <div className="absolute bottom-0 left-1/2 w-0 h-1 bg-yellow-400 transition-all duration-300 ease-in-out group-hover:w-full group-hover:left-0"></div>
