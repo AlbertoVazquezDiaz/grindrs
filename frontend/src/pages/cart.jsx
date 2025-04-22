@@ -68,7 +68,7 @@ const CartPage = () => {
       const ventaData = {
         usuario: user.id,
         total: totalPrice,
-        detalles: detallesVenta,
+        detalles_input: detallesVenta,
       };
 
       await api.post("ventas/", ventaData, {
@@ -123,7 +123,7 @@ const CartPage = () => {
       return;
     }
 
-    const detalles = componentes.map((item) => ({
+    const detalles_input = componentes.map((item) => ({
       componente: item.id,
       cantidad: item.quantity,
       subtotal: item.price * item.quantity,
@@ -132,7 +132,7 @@ const CartPage = () => {
     const ventaData = {
       usuario: user.id,
       total: totalPrice,
-      detalles,
+      detalles_input,
     };
 
     try {
