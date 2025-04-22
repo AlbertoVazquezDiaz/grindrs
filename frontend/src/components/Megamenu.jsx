@@ -17,7 +17,7 @@ import { CartContext } from "../contexts/contexts";
 
 const initialNavigation = [
   { name: "Inicio", href: "/", current: true },
-  { name: "Builder", href: "#", current: false },
+  { name: "Builder", href: "/builder", current: false },
   { name: "Contáctanos", href: "/contact", current: false },
   { name: "Registrarme", action: "openRegisterModal", current: false },
   { name: "Iniciar sesión", action: "openLoginModal", current: false },
@@ -31,13 +31,10 @@ const Megamenu = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [navigation, setNavigation] = useState(initialNavigation);
-  const { isAuthenticated, setIsAuthenticated, cartItems, setCartItems } = useContext(CartContext);
-  //const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { isAuthenticated, setIsAuthenticated, cartItems, setCartItems } =
+    useContext(CartContext);
   const location = useLocation();
   const navigate = useNavigate();
-  //const { cartItems } = useContext(CartContext);
-  //const { setCartItems } = useContext(CartContext);
-
 
   useEffect(() => {
     const updatedNavigation = initialNavigation.map((item) => ({
@@ -78,7 +75,11 @@ const Megamenu = () => {
 
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex shrink-0 items-center">
-                <img alt="Grindrs logo" src="/grindr.svg" className="h-10 w-auto" />
+                <img
+                  alt="Grindrs logo"
+                  src="/grindr.svg"
+                  className="h-10 w-auto"
+                />
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
@@ -138,9 +139,12 @@ const Megamenu = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <button
-                              className={`${active ? "bg-gray-700 text-yellow-400" : "text-gray-300"
-                                } w-full text-left px-4 py-2 text-sm`}
-                              onClick={() => navigate("/mis-pedidos")}
+                              className={`${
+                                active
+                                  ? "bg-gray-700 text-yellow-400"
+                                  : "text-gray-300"
+                              } w-full text-left px-4 py-2 text-sm`}
+                              onClick={() => navigate("/my-orders")}
                             >
                               Mis pedidos
                             </button>
@@ -149,8 +153,11 @@ const Megamenu = () => {
                         <Menu.Item>
                           {({ active }) => (
                             <button
-                              className={`${active ? "bg-gray-700 text-red-400" : "text-red-300"
-                                } w-full text-left px-4 py-2 text-sm`}
+                              className={`${
+                                active
+                                  ? "bg-gray-700 text-red-400"
+                                  : "text-red-300"
+                              } w-full text-left px-4 py-2 text-sm`}
                               onClick={() => {
                                 localStorage.clear();
                                 setCartItems([]);
@@ -180,18 +187,12 @@ const Megamenu = () => {
                   className="text-gray-300 hover:text-yellow-400 rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
                 >
                   <ShoppingBagIcon className="h-5 w-5" aria-hidden="true" />
-                  {cartItems.reduce((acc, item) => acc + item.quantity, 0) > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold rounded-full px-1.5 py-0.5">
+                  {cartItems.reduce((acc, item) => acc + item.quantity, 0) >
+                    0 && (
+                    <span className="absolute mt-3 -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold rounded-full px-1.5 py-0.5">
                       {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
                     </span>
                   )}
-
-                  {/*{cartItems.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-black text-xs font-bold rounded-full px-1.5 py-0.5">
-                      {cartItems.length}
-                    </span>
-                  )}*/}
-
                 </button>
               </div>
             </div>

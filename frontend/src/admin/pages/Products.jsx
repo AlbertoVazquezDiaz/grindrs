@@ -1,3 +1,4 @@
+// IMPORTS
 import React, { useState, useEffect } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import api from "../../API/axiosConfig";
@@ -11,6 +12,7 @@ import {
 import DataTable from "react-data-table-component";
 import AddStockModal from "../components/AddStockModal";
 
+// COMPONENT
 const Products = () => {
   const [componentes, setComponentes] = useState([]);
   const [search, setSearch] = useState("");
@@ -37,22 +39,30 @@ const Products = () => {
   const [tiposComponentes, setTiposComponentes] = useState({});
   const [tipoComponente, setTipoComponente] = useState("");
   const [tipoComponenteEditar, setTipoComponenteEditar] = useState("");
-
-  const openEditModal = (component) => {
-    setEditingComponent(component);
-    setEditFormData({ ...component });
-    
-    const tipo = Object.values(tiposComponentes).find(
-      (t) => t.id === component.tipo_componente
-    );
-    setTipoComponenteEditar(tipo?.nombre || "");
-
-    setShowEditModal(true);
-  };
+  const [displayPrecio, setDisplayPrecio] = useState("");
 
   useEffect(() => {
     fetchComponentes();
   }, []);
+
+  const handleRemoveImage = (index) => {
+    const newPreview = [...preview];
+    newPreview.splice(index, 1);
+
+    const newFormData = { ...formData };
+    delete newFormData[`imagen${index + 1}`];
+
+    const updatedImages = newPreview.reduce((acc, img, i) => {
+      acc[`imagen${i + 1}`] = formData[`imagen${i + 1}`];
+      return acc;
+    }, {});
+
+    setPreview(newPreview);
+    setFormData({
+      ...formData,
+      ...updatedImages,
+    });
+  };
 
   const resertForm = () => {
     setFormData({
@@ -67,9 +77,32 @@ const Products = () => {
       potencia_watts: "0",
       certificacion: "null",
     });
+    setDisplayPrecio("");
     setPreview([]);
     setTipoComponente("");
-  }
+  };
+
+
+  const handleUpdateComponent = async () => {
+    const hasChanges = Object.entries(editFormData).some(
+      ([key, value]) => value !== editingComponent[key]
+    );
+
+    if (!hasChanges) {
+      toast.info("No hay cambios para guardar.");
+      return;
+    }
+
+    try {
+      await api.patch(`componente/${editingComponent.id}/`, editFormData);
+      toast.success("Componente actualizado correctamente");
+      fetchComponentes();
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error al actualizar componente", err);
+      toast.error("Error al actualizar el componente.");
+    }
+  };
 
   const fetchComponentes = async () => {
     try {
@@ -80,45 +113,9 @@ const Products = () => {
       setTiposComponentes(responses.data);
     } catch (error) {
       toast.error("Error al obtener componentes.");
-      console.error("Error al obtener componentes:", error);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    const total =
-      Object.keys(formData).filter((k) => k.startsWith("imagen")).length +
-      files.length;
-    if (total > 5) {
-      toast.error("Máximo 5 imágenes permitidas.");
-      return;
-    }
-
-    const newpreviews = [...preview];
-    const updatedFormData = { ...formData };
-
-    let nextIndex =
-      Object.keys(formData).filter((k) => k.startsWith("imagen")).length + 1;
-
-    files.forEach((file) => {
-      if (["image/png", "image/jpeg"].includes(file.type)) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          updatedFormData[`imagen${nextIndex}`] = reader.result;
-          setFormData({ ...updatedFormData });
-          nextIndex++;
-        };
-        reader.readAsDataURL(file);
-        newpreviews.push(URL.createObjectURL(file));
-      } else {
-        toast.error("Solo se permiten imágenes PNG o JPG.");
-      }
-    });
-
-    setPreview(newpreviews);
   };
 
   const handleDeleteComponent = (id) => {
@@ -163,40 +160,51 @@ const Products = () => {
     });
   };
 
-  const handleUpdateComponent = async () => {
-    const hasChanges = Object.entries(editFormData).some(
-      ([key, value]) => value !== editingComponent[key]
-    );
-
-    if (!hasChanges) {
-      toast.info("No hay cambios para guardar.");
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    const total =
+      Object.keys(formData).filter((k) => k.startsWith("imagen")).length +
+      files.length;
+    if (total > 5) {
+      toast.error("Máximo 5 imágenes permitidas.");
       return;
     }
 
-    try {
-      await api.patch(`componente/${editingComponent.id}/`, editFormData);
-      toast.success("Componente actualizado correctamente");
-      fetchComponentes();
-      setShowEditModal(false);
-    } catch (err) {
-      console.error("Error al actualizar componente", err);
-      toast.error("Error al actualizar el componente.");
-    }
+    const newpreviews = [...preview];
+    const updatedFormData = { ...formData };
+
+    let nextIndex =
+      Object.keys(formData).filter((k) => k.startsWith("imagen")).length + 1;
+
+    files.forEach((file) => {
+      if (["image/png", "image/jpeg"].includes(file.type)) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          updatedFormData[`imagen${nextIndex}`] = reader.result;
+          setFormData({ ...updatedFormData });
+          nextIndex++;
+        };
+        reader.readAsDataURL(file);
+        newpreviews.push(URL.createObjectURL(file));
+      } else {
+        toast.error("Solo se permiten imágenes PNG o JPG.");
+      }
+    });
+
+    setPreview(newpreviews);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(formData);
-    try {
-      await api.post("componente/", formData);
-      toast.success("Componente registrado correctamente");
-      setShowModal(false);
-      fetchComponentes();
-      resertForm();
-      console.log(formData);
-    } catch (err) {
-      console.error("Error al registrar componente", err);
-      toast.error("Error al registrar el componente.");
+  const formatNumber = (value) => {
+    return new Intl.NumberFormat("es-MX").format(value);
+  };
+
+  const handlePrecioChange = (e) => {
+    const rawValue = e.target.value.replace(/,/g, "");
+    const numberValue = Number(rawValue);
+
+    if (!isNaN(numberValue)) {
+      setDisplayPrecio(formatNumber(numberValue));
+      setFormData({ ...formData, precio: numberValue });
     }
   };
 
@@ -224,7 +232,49 @@ const Products = () => {
         certificacion: "null",
       });
     }
-  }
+  };
+
+  const openEditModal = (component) => {
+    setEditingComponent(component);
+    setEditFormData({ ...component });
+
+    const tipo = Object.values(tiposComponentes).find(
+      (t) => t.id === component.tipo_componente
+    );
+    setTipoComponenteEditar(tipo?.nombre || "");
+
+    setShowEditModal(true);
+  };
+
+  useEffect(() => {
+    fetchComponentes();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let dataToSend = { ...formData };
+
+    if (tipoComponente !== "Fuente de poder") {
+      delete dataToSend.certificacion;
+      delete dataToSend.potencia_watts;
+
+      if (!dataToSend.consumo_watts) {
+        delete dataToSend.consumo_watts;
+      }
+    }
+
+    try {
+      await api.post("componente/", dataToSend);
+      toast.success("Componente registrado correctamente");
+      setShowModal(false);
+      fetchComponentes();
+      resertForm();
+    } catch (err) {
+      console.error("Error al registrar componente", err);
+      toast.error("Error al registrar el componente.");
+    }
+  };
 
   const columns = [
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -293,72 +343,25 @@ const Products = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-8">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full relative p-12">
+          <div className="bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full relative p-12">
             <button
               className="absolute top-6 right-6 text-gray-500 hover:text-black"
               onClick={() => {
                 resertForm();
-                setShowModal(false)
+                setShowModal(false);
               }}
             >
               <XMarkIcon className="h-8 w-8 font-extrabold hover:cursor-pointer" />
             </button>
-            <h2 className="text-xl font-semibold mb-4">Registrar Componente</h2>
+            <h2 className="text-xl font-semibold mb-4 text-white">
+              Agregar componente
+            </h2>
             <form
               onSubmit={handleSubmit}
-              className="flex flex-wrap gap-3"
-              encType="multipart/form-data"
+              className="flex flex-wrap gap-3 text-white"
             >
-              <input
-                type="text"
-                placeholder="Nombre"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, nombre: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Marca"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, marca: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Modelo"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, modelo: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Descripcion"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, descripcion: e.target.value })
-                }
-              />
-              <input
-                type="number"
-                placeholder="Precio"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, precio: e.target.value })
-                }
-              />
-              <input
-                type="number"
-                placeholder="Stock"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, stock: e.target.value })
-                }
-              />
               <select
-                className="border px-3 py-2 rounded w-full"
+                className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-500 border-white"
                 value={formData.tipo_componente}
                 onChange={handleChange}
               >
@@ -370,20 +373,76 @@ const Products = () => {
                 ))}
               </select>
 
-              {tipoComponente === "Fuente de poder" ? (
+              <input
+                type="text"
+                placeholder="Nombre"
+                className="border px-3 py-2 rounded w-full"
+                onChange={(e) =>
+                  setFormData({ ...formData, nombre: e.target.value })
+                }
+              />
+
+              <input
+                type="text"
+                placeholder="Marca"
+                className="border px-3 py-2 rounded w-full"
+                onChange={(e) =>
+                  setFormData({ ...formData, marca: e.target.value })
+                }
+              />
+
+              <input
+                type="text"
+                placeholder="Modelo"
+                className="border px-3 py-2 rounded w-full"
+                onChange={(e) =>
+                  setFormData({ ...formData, modelo: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Descripción"
+                className="border px-3 py-2 rounded w-full"
+                onChange={(e) =>
+                  setFormData({ ...formData, descripcion: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Precio"
+                value={displayPrecio}
+                className="border px-3 py-2 rounded w-full"
+                onChange={handlePrecioChange}
+              />
+              <input
+                type="number"
+                placeholder="Stock"
+                className="border px-3 py-2 rounded w-full"
+                onChange={(e) =>
+                  setFormData({ ...formData, stock: e.target.value })
+                }
+              />
+
+              {tipoComponente === "Fuente de poder" && (
                 <>
                   <input
                     type="number"
                     placeholder="Potencia en watts"
                     className="border px-3 py-2 rounded w-full"
                     onChange={(e) =>
-                      setFormData({ ...formData, potencia_watts: e.target.value })
+                      setFormData({
+                        ...formData,
+                        potencia_watts: e.target.value,
+                      })
                     }
                   />
                   <select
-                    className="border px-3 py-2 rounded w-full"
+                    className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-500 border-white"
                     onChange={(e) =>
-                      setFormData({ ...formData, certificacion: e.target.value })
+                      setFormData({
+                        ...formData,
+                        certificacion: e.target.value,
+                      })
                     }
                   >
                     <option value="">Certificación</option>
@@ -395,25 +454,9 @@ const Products = () => {
                     <option value="80 PLUS Titanium">80 PLUS Titanium</option>
                   </select>
                 </>
-              ) : (
-                <input
-                  type="number"
-                  placeholder="Consumo en watts"
-                  className="border px-3 py-2 rounded w-full"
-                  onChange={(e) =>
-                    setFormData({ ...formData, consumo_watts: e.target.value })
-                  }
-                />
               )}
-              {/*<input
-                type="number"
-                placeholder="Tipo componente ID"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, tipo_componente: e.target.value })
-                }
-              />*/}
-              <label className="cursor-pointer w-full bg-white border-dashed border-2 border-yellow-400 px-4 py-3 rounded text-gray-700 text-center">
+
+              <label className="cursor-pointer w-full border-dashed border-2 border-yellow-400 px-4 py-3 rounded text-white text-center">
                 <PhotoIcon className="w-6 h-6 mx-auto mb-2" />
                 Subir imagen
                 <input
@@ -428,12 +471,20 @@ const Products = () => {
               {preview.length > 0 && (
                 <div className="flex flex-wrap gap-2 justify-center">
                   {preview.map((src, idx) => (
-                    <img
-                      key={idx}
-                      src={src}
-                      alt={`preview-${idx}`}
-                      className="w-20 h-20 object-cover rounded"
-                    />
+                    <div key={idx} className="relative">
+                      <img
+                        src={src}
+                        alt={`preview-${idx}`}
+                        className="w-20 h-20 object-cover rounded"
+                      />
+                      <button
+                        type="button"
+                        className="absolute -top-2 -right-2 bg-gray-400 text-white rounded-full w-6 h-6 text-xs flex items-center justify-center hover:bg-gray-500 hover:cursor-pointer"
+                        onClick={() => handleRemoveImage(idx)}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -549,7 +600,9 @@ const Products = () => {
                   }
                 }}
               >
-                <option value="" className="bg-gray-800">Tipo componente</option>
+                <option value="" className="bg-gray-800">
+                  Tipo componente
+                </option>
                 {tiposComponentes.map((tipo) => (
                   <option key={tipo.id} value={tipo.id} className="bg-gray-800">
                     {tipo.nombre}
@@ -565,14 +618,20 @@ const Products = () => {
                     value={editFormData.potencia_watts || ""}
                     className="border px-3 py-2 rounded w-full"
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, potencia_watts: e.target.value })
+                      setEditFormData({
+                        ...editFormData,
+                        potencia_watts: e.target.value,
+                      })
                     }
                   />
                   <select
                     className="border px-3 py-2 rounded w-full"
                     value={editFormData.certificacion || ""}
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, certificacion: e.target.value })
+                      setEditFormData({
+                        ...editFormData,
+                        certificacion: e.target.value,
+                      })
                     }
                   >
                     <option value="">Certificación</option>
@@ -591,7 +650,10 @@ const Products = () => {
                   value={editFormData.consumo_watts || ""}
                   className="border px-3 py-2 rounded w-full"
                   onChange={(e) =>
-                    setEditFormData({ ...editFormData, consumo_watts: e.target.value })
+                    setEditFormData({
+                      ...editFormData,
+                      consumo_watts: e.target.value,
+                    })
                   }
                 />
               )}

@@ -8,32 +8,47 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 const Landing = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setIsLoading(true);
         const res = await api.get("componente/");
-        console.log(res.data);
         const mapped = res.data.map((item) => ({
           id: item.id,
           name: item.nombre,
-          description: item.descripcion, 
+          description: item.descripcion,
           detail: `${item.marca} ${item.modelo}`,
           price: item.precio,
           image: item.imagen1,
-          stock: item.stock ,
+          stock: item.stock,
+          tipo_componente: item.tipo_componente, // <--- importante
         }));
+
         setProducts(mapped);
+        setFilteredProducts(mapped);
       } catch (error) {
         console.error("Error al obtener productos:", error);
-      }finally {
+      } finally {
         setIsLoading(false);
       }
     };
     fetchProducts();
   }, []);
+
+  const handleFilter = (tipoId) => {
+    if (tipoId === null) {
+      setFilteredProducts(products);
+    } else {
+      const filtrados = products.filter(
+        (product) => Number(product.tipo_componente) === Number(tipoId)
+      );
+      setFilteredProducts(filtrados);
+    }
+  };
+  
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -43,7 +58,11 @@ const Landing = () => {
       <Slider />
 
       <div className="flex w-full mt-5">
-        <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={closeSidebar}
+          onFilter={handleFilter}
+        />
 
         <div className="flex-1 p-4">
           <div className="flex items-center gap-4 mb-4">
@@ -67,7 +86,7 @@ const Landing = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <div
                   key={product.id}
                   className="w-full sm:w-[90%] md:w-[95%] lg:w-auto mx-auto"

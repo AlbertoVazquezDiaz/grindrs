@@ -49,7 +49,8 @@ const ProductView = () => {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      toast.error('Inicia sesion primero')
+      toast.error('Inicia sesión primero')
+  
     } else {
       addToCart(product);
     }
