@@ -80,7 +80,32 @@ class ComputadoraSerializer(serializers.ModelSerializer):
         detalles_data = validated_data.pop('detalles')
         computadora = Computadora.objects.create(**validated_data)
 
-        detalles = [DetalleComputadora(computadora=computadora, **detalle) for detalle in detalles_data]
+        detalles = []
+
+        for detalle in detalles_data:
+            componente = detalle['componente']
+            cantidad = detalle['cantidad']
+
+            # Verificación de stock
+            if isinstance(componente, int):  # en caso de que venga como ID
+                componente = Componente.objects.get(id=componente)
+
+            if cantidad > componente.stock:
+                raise serializers.ValidationError(
+                    f"Stock insuficiente para el componente {componente.id}. Disponible: {componente.stock}"
+                )
+
+            # Descuento de stock
+            componente.stock -= cantidad
+            componente.save()
+
+            detalles.append(DetalleComputadora(computadora=computadora, componente=componente, cantidad=cantidad))
+
+
+        
+        #detalles = [DetalleComputadora(computadora=computadora, **detalle) for detalle in detalles_data]
+        
+        
         DetalleComputadora.objects.bulk_create(detalles)
 
         return computadora
@@ -113,14 +138,16 @@ class DetalleVentaSerializer(serializers.ModelSerializer):
         fields = ['computadora', 'componente', 'cantidad', 'subtotal']
 
 class VentaSerializer(serializers.ModelSerializer):
-    detalles = DetalleVentaSerializer(many=True)
+    detalles = DetalleVentaSerializer(many=True, read_only=True, source='detalleventa_set')
+
+    detalles_input = DetalleVentaSerializer(many=True, write_only=True)
 
     class Meta:
         model = Venta
-        fields = ['id', 'usuario', 'total', 'detalles']
+        fields = ['id', 'usuario', 'total', 'detalles', 'detalles_input']
 
     def create(self, validated_data):
-        detalles_data = validated_data.pop('detalles')
+        detalles_data = validated_data.pop('detalles_input')
         venta = Venta.objects.create(**validated_data)
 
         ventasDetalle = []
