@@ -12,7 +12,6 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden relative">
-      {/* Botón hamburguesa en pantallas pequeñas */}
       <header className="md:hidden fixed top-0 left-0 w-full h-14 bg-black z-50 flex items-center px-4 shadow">
         <button
           onClick={toggleSidebar}
@@ -29,9 +28,9 @@ const AdminLayout = () => {
       <main
         className={`transition-all duration-300 flex-1 overflow-auto pt-16 md:pt-6 ${
           isSidebarOpen && window.innerWidth >= 768
-            ? "ml-52"
+            ? "mx-auto"
             : window.innerWidth >= 768
-            ? "ml-8"
+            ? "mx-auto"
             : ""
         }`}
       >

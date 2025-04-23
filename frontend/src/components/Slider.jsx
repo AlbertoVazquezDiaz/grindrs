@@ -1,18 +1,17 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../API/axiosConfig";
 
 const Slider = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [slides, setSlides] = useState([]);
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await api.get("slider/");
-        setSlides(response.data.map((img) => img.imagen)); 
-      } catch (error) {
-        console.error("Error al cargar las imágenes del slider:", error);
+        const res = await api.get("slider/");
+        setSlides(res.data.map((img) => img.imagen));
+      } catch (err) {
+        console.error("Error al obtener imágenes del slider", err);
       }
     };
 
@@ -21,64 +20,79 @@ const Slider = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-    }, 3000);
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 4000);
     return () => clearInterval(interval);
   }, [slides.length]);
 
-  const goToPrevious = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + slides.length) % slides.length
-    );
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
-
   return (
-    <div className="relative overflow-hidden">
-      <div
-        className="flex transition-transform duration-300 ease-in-out"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
-        {slides.map((slide, index) => (
-          <div className="min-w-full" key={index}>
+    <div id="default-carousel" className="relative w-full" data-carousel="slide">
+      {/* Carousel wrapper */}
+      <div className="relative overflow-hidden w-full h-[220px] sm:h-[280px] md:h-[400px] lg:h-[480px] xl:h-[600px]">
+        {slides.map((slide, idx) => (
+          <div
+            key={idx}
+            className={`absolute inset-0 flex justify-center items-center transition-opacity duration-700 ease-in-out ${
+              current === idx ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+            data-carousel-item
+          >
             <img
-              className="w-full object-cover h-[480px]"
               src={slide}
-              alt={`Slide ${index + 1}`}
+              alt={`Slide ${idx + 1}`}
+              className="max-h-full w-auto object-contain mx-auto"
             />
           </div>
         ))}
       </div>
-      <button
-        className="absolute rounded-full top-1/2 left-4 transform -translate-y-1/2 bg-gray-800/20 text-white p-2"
-        onClick={goToPrevious}
-      >
-        <ChevronLeftIcon className="w-6 h-6" />
-      </button>
-      <button
-        className="absolute rounded-full top-1/2 right-4 transform -translate-y-1/2 bg-gray-800/20 text-white p-2 cursor-pointer"
-        onClick={goToNext}
-      >
-        <ChevronRightIcon className="w-6 h-6" />
-      </button>
-      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-2 mb-4 cursor-pointer">
-        {slides.map((_, index) => (
+
+      {/* Indicadores */}
+      <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3">
+        {slides.map((_, idx) => (
           <button
-            key={index}
+            key={idx}
+            onClick={() => setCurrent(idx)}
             className={`w-3 h-3 rounded-full ${
-              currentIndex === index ? "bg-gray-800" : "bg-gray-400"
+              current === idx ? "bg-yellow-400" : "bg-white"
             }`}
-            onClick={() => goToSlide(index)}
+            aria-label={`Slide ${idx + 1}`}
+            aria-current={current === idx}
           />
         ))}
       </div>
+
+      {/* Controles */}
+      <button
+        type="button"
+        className="absolute top-1/2 left-4 z-30 -translate-y-1/2 bg-white/30 hover:bg-white/50 rounded-full p-2"
+        onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
+      >
+        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 6 10">
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 1 1 5l4 4"
+          />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        className="absolute top-1/2 right-4 z-30 -translate-y-1/2 bg-white/30 hover:bg-white/50 rounded-full p-2"
+        onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
+      >
+        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 6 10">
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="m1 9 4-4-4-4"
+          />
+        </svg>
+      </button>
     </div>
   );
 };
