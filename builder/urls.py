@@ -19,4 +19,5 @@ urlpatterns = [
     path('computadoras/', ComputadoraCreateView.as_view(), name='computadoras'),
     path('computadoras/<int:pk>/', ComputadoraChangeView.as_view(), name='computadorasDetalle'),
     path('ventas/', VentaCreteView.as_view(), name='crearVenta'),
+    path('ventas/total/', VentaTotalView.as_view(), name='ventas-total'),
 ]

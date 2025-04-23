@@ -20,6 +20,7 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render
 
 from rest_framework.generics import get_object_or_404
+from django.db.models import Sum
 
 class RolViewSet(viewsets.ModelViewSet):
     queryset = Rol.objects.all()
@@ -228,3 +229,8 @@ class VentaCreteView(APIView):
             }, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class VentaTotalView(APIView):
+    def get(self, request):
+        total_ventas = Venta.objects.aggregate(total=Sum('total'))['total'] or 0
+        return Response({'total_ventas': total_ventas}, status=status.HTTP_200_OK)
