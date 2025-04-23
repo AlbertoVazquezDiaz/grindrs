@@ -6,14 +6,51 @@ import {
   ChartBarSquareIcon,
   ArrowRightOnRectangleIcon,
   ComputerDesktopIcon,
-  LinkIcon
+  LinkIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
 import useLogout from "../../../hooks/useLogout";
+import { toast } from "react-toastify";
+import { confirmAlert } from "react-confirm-alert";
 
 const AdminSidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   const logout = useLogout();
+
+  const confirmLogout = (logout) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="bg-gray-800 p-6 rounded shadow-lg text-center w-full max-w-md mx-auto">
+            <h2 className="text-lg font-bold mb-3 text-yellow-400">
+              ¿Cerrar sesión?
+            </h2>
+            <p className="text-sm text-gray-200 mb-6">
+              Tu sesión se cerrará inmediatamente.
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  logout();
+                  toast.success("Saliste de tu cuenta");
+                  onClose();
+                }}
+              >
+                Sí, cerrar
+              </button>
+              <button
+                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded text-gray-800"
+                onClick={onClose}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
 
   const menuItems = [
     {
@@ -43,7 +80,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
     },
     {
       label: "Cerrar sesión",
-      action: logout,
+      action: () => confirmLogout(logout),
       icon: <ArrowRightOnRectangleIcon className="w-6 h-6" />,
     },
   ];
@@ -101,7 +138,6 @@ const AdminSidebar = ({ isOpen, toggleSidebar }) => {
         </ul>
       </div>
 
-      {/* Botón de colapsar solo en escritorio */}
       <button
         onClick={toggleSidebar}
         className="hidden md:flex items-center justify-center p-2 m-4 rounded-full hover:bg-gray-700 transition-colors self-end"

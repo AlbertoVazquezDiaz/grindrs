@@ -14,6 +14,9 @@ import {
 } from "@heroicons/react/24/outline";
 import LoginModal from "./LoginModal";
 import { CartContext } from "../contexts/contexts";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
+import { toast } from "react-toastify";
 
 const initialNavigation = [
   { name: "Inicio", href: "/", current: true },
@@ -159,11 +162,45 @@ const Megamenu = () => {
                                   : "text-red-300"
                               } w-full text-left px-4 py-2 text-sm`}
                               onClick={() => {
-                                localStorage.clear();
-                                setCartItems([]);
-                                setIsAuthenticated(false);
-                                window.dispatchEvent(new Event("authChange"));
-                                navigate("/");
+                                confirmAlert({
+                                  customUI: ({ onClose }) => (
+                                    <div className="bg-gray-800 p-6 rounded shadow-lg text-center w-full max-w-md mx-auto">
+                                      <h2 className="text-lg font-bold mb-3 text-yellow-400">
+                                        ¿Cerrar sesión?
+                                      </h2>
+                                      <p className="text-sm text-gray-200 mb-6">
+                                        Se cerrará tu sesión actual. ¿Deseas
+                                        continuar?
+                                      </p>
+                                      <div className="flex justify-center gap-4">
+                                        <button
+                                          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                                          onClick={() => {
+                                            localStorage.clear();
+                                            setCartItems([]);
+                                            setIsAuthenticated(false);
+                                            window.dispatchEvent(
+                                              new Event("authChange")
+                                            );
+                                            navigate("/");
+                                            toast.success(
+                                              "Saliste de tu cuenta."
+                                            );
+                                            onClose();
+                                          }}
+                                        >
+                                          Sí, cerrar sesión
+                                        </button>
+                                        <button
+                                          className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded text-gray-800"
+                                          onClick={onClose}
+                                        >
+                                          Cancelar
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ),
+                                });
                               }}
                             >
                               Cerrar sesión

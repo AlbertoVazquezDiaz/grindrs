@@ -99,7 +99,10 @@ export const CartProvider = ({ children }) => {
         toast.error(`No puedes agregar más de ${stock} unidades de ${name}`);
       } else if (wasAdded) {
         toast.success(`${name} agregado al carrito`);
+      } else if (stock <= 0) {
+        toast.error(`No hay stock disponible para ${name}`);
       }
+      
     }, 0);
   };
 

@@ -8,7 +8,6 @@ const api = axios.create({
     },
   });
   
-  // Agregar el token a las solicitudes si existe en localStorage
   api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token"); 
     const isPublic = publicRoutes.some((route) => config.url.includes(route));
