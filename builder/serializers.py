@@ -181,3 +181,8 @@ class VentaSerializer(serializers.ModelSerializer):
 
         DetalleVenta.objects.bulk_create(ventasDetalle)
         return venta
+
+class FotoSliderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FotoSlider
+        fields = '__all__'
