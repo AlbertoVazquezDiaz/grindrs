@@ -2,26 +2,19 @@ import { CheckIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "../contexts/contexts";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const ProductCard = ({ product }) => {
-  //const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  /*useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, []);
-  */
-  const { isAuthenticated, addToCart, cartItems, decreaseFromCart } = useContext(CartContext);
-  //const existingItem = cartItems.find((item) => item.id === product.id);
-  const existingItem = cartItems.find((item) => item.id === product.id && item.tipo === "componente");
-
-
+  const { isAuthenticated, addToCart, cartItems, decreaseFromCart } =
+    useContext(CartContext);
+  const existingItem = cartItems.find(
+    (item) => item.id === product.id && item.tipo === "componente"
+  );
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      toast.error('Inicia sesion primero')
+      toast.error("Inicia sesión primero");
     } else {
       addToCart(product);
     }
@@ -58,7 +51,10 @@ const ProductCard = ({ product }) => {
             {product.detail || "Sin detalles"}
           </p>
           <p className="text-lg font-bold text-gray-200">
-            {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(product.price)}
+            {new Intl.NumberFormat("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            }).format(product.price)}
           </p>
         </div>
 
@@ -93,7 +89,10 @@ const ProductCard = ({ product }) => {
             </div>
           ) : (
             <button
-              onClick={handleAddToCart}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(e);
+              }}
               className="bg-[#FFBB00] hover:bg-yellow-500 px-3 py-2 rounded-full"
             >
               <ShoppingCartIcon className="w-5 h-5" />

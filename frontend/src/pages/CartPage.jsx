@@ -106,7 +106,6 @@ const CartPage = () => {
 
     items.forEach((item) => {
       if (item.tipo === "computadora") {
-        // Fila de la computadora
         body.push([
           {
             content: "PC Personalizada",
@@ -116,7 +115,6 @@ const CartPage = () => {
           `$${Number(item.precio).toLocaleString("es-MX")}`,
         ]);
 
-        // Componentes internos
         item.componentes.forEach((comp) => {
           body.push([
             {
@@ -128,7 +126,6 @@ const CartPage = () => {
           ]);
         });
 
-        // Línea en blanco como separación visual
         body.push(["", "", ""]);
       } else {
         body.push([
