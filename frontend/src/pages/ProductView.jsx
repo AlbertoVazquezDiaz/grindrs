@@ -79,11 +79,24 @@ const ProductView = () => {
             showPlayButton={false}
             showFullscreenButton={true}
             renderItem={(item) => (
-              <div className="w-full aspect-[4/3] bg-[#1e1e1e]">
+              <div
+                style={{
+                  width: "100%",
+                  height: "400px", // Altura fija para todas las imágenes
+                  backgroundColor: "#111",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <img
                   src={item.original}
                   alt=""
-                  className="w-full h-full object-cover"
+                  style={{
+                    maxHeight: "100%",
+                    maxWidth: "100%",
+                    objectFit: "cover", // o "cover" si prefieres recorte
+                  }}
                 />
               </div>
             )}
@@ -114,37 +127,38 @@ const ProductView = () => {
               : "Agotado"}
           </p>
 
-          {existingItem && existingItem.quantity > 0 ? (
-            <div className="flex items-center gap-2">
+          {product.stock > 0 ? (
+            existingItem && existingItem.quantity > 0 ? (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => decreaseFromCart(Number(productId))}
+                  className="bg-red-500 text-white px-2 py-1 rounded"
+                >
+                  -
+                </button>
+                <span className="text-white">{existingItem.quantity}</span>
+                <button
+                  onClick={() => addToCart(product)}
+                  className="bg-green-500 text-white px-2 py-1 rounded"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
               <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  decreaseFromCart(Number(productId));
-                }}
-                className="bg-red-500 text-white px-2 py-1 rounded"
+                onClick={handleAddToCart}
+                className="relative bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded w-full sm:w-auto transition flex items-center justify-center gap-2"
               >
-                -
+                Agregar al carrito
+                <ShoppingBagIcon className="w-5 h-5 text-black" />
               </button>
-              <span className="text-white">{existingItem.quantity}</span>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  addToCart(product);
-                }}
-                className="bg-green-500 text-white px-2 py-1 rounded"
-              >
-                +
-              </button>
-            </div>
+            )
           ) : (
             <button
-              onClick={handleAddToCart}
-              className="relative hover:cursor-pointer bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-6 py-2 rounded w-full sm:w-auto overflow-hidden group transition duration-300 flex items-center justify-center gap-2"
+              disabled
+              className="bg-gray-500 text-white font-semibold px-6 py-2 rounded w-full sm:w-auto cursor-not-allowed"
             >
-              Agregar al carrito
-              <span className="opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out">
-                <ShoppingBagIcon className="w-5 h-5 text-black" />
-              </span>
+              Sin stock disponible
             </button>
           )}
 
@@ -163,7 +177,7 @@ const ProductView = () => {
       {relatedProducts.length > 0 && (
         <div className="mt-20 w-full max-w-screen-xl mx-auto">
           <h2 className="text-2xl font-semibold mb-6 text-yellow-400">
-            Productos Relacionados
+            Productos relacionados
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {relatedProducts.map((rp) => (

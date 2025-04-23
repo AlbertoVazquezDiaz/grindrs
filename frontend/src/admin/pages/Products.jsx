@@ -82,7 +82,6 @@ const Products = () => {
     setTipoComponente("");
   };
 
-
   const handleUpdateComponent = async () => {
     const hasChanges = Object.entries(editFormData).some(
       ([key, value]) => value !== editingComponent[key]
@@ -361,7 +360,7 @@ const Products = () => {
               className="flex flex-wrap gap-3 text-white"
             >
               <select
-                className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-500 border-white"
+                className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-500 border-gray-500 "
                 value={formData.tipo_componente}
                 onChange={handleChange}
               >
@@ -376,16 +375,21 @@ const Products = () => {
               <input
                 type="text"
                 placeholder="Nombre"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, nombre: e.target.value })
-                }
+                className="border px-3 py-2 rounded w-full border-gray-500"
+                value={formData.nombre || ""}
+                onChange={(e) => {
+                  const value = e.target.value.replace(
+                    /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]/g,
+                    ""
+                  );
+                  setFormData({ ...formData, nombre: e.target.value });
+                }}
               />
 
               <input
                 type="text"
                 placeholder="Marca"
-                className="border px-3 py-2 rounded w-full"
+                className="border px-3 py-2 rounded w-full border-gray-500"
                 onChange={(e) =>
                   setFormData({ ...formData, marca: e.target.value })
                 }
@@ -394,33 +398,53 @@ const Products = () => {
               <input
                 type="text"
                 placeholder="Modelo"
-                className="border px-3 py-2 rounded w-full"
+                className="border px-3 py-2 rounded w-full border-gray-500"
                 onChange={(e) =>
                   setFormData({ ...formData, modelo: e.target.value })
                 }
               />
-              <input
-                type="text"
-                placeholder="Descripción"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, descripcion: e.target.value })
-                }
-              />
+              <div className="relative w-full">
+                <label className="text-sm font-semibold text-gray-300 mb-1 block">
+                  Descripción{" "}
+                  <span className="text-yellow-400">(máx. 200 caracteres)</span>
+                </label>
+                <textarea
+                  rows={4}
+                  maxLength={200}
+                  value={formData.descripcion || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      descripcion: e.target.value.slice(0, 200),
+                    })
+                  }
+                  placeholder="Escribe aquí una descripción..."
+                  className="w-full px-4 py-3 border border-gray-500 bg-[#1e1e1e] text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition resize-none"
+                />
+                <div className="absolute bottom-2 right-3 text-xs text-gray-400">
+                  {formData.descripcion?.length || 0}/200
+                </div>
+              </div>
               <input
                 type="text"
                 placeholder="Precio"
                 value={displayPrecio}
-                className="border px-3 py-2 rounded w-full"
+                className="border px-3 py-2 rounded w-full border-gray-500"
                 onChange={handlePrecioChange}
               />
               <input
                 type="number"
                 placeholder="Stock"
-                className="border px-3 py-2 rounded w-full"
-                onChange={(e) =>
-                  setFormData({ ...formData, stock: e.target.value })
-                }
+                min={0}
+                max={99999}
+                value={formData.stock || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d{0,5}$/.test(value)) {
+                    setFormData({ ...formData, stock: value });
+                  }
+                }}
+                className="w-full px-4 py-2 border border-gray-500 rounded text-white"
               />
 
               {tipoComponente === "Fuente de poder" && (
@@ -437,7 +461,7 @@ const Products = () => {
                     }
                   />
                   <select
-                    className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-500 border-white"
+                    className="appearance-none border px-3 py-2 rounded w-full focus:outline-none text-gray-500 border-gray-500"
                     onChange={(e) =>
                       setFormData({
                         ...formData,

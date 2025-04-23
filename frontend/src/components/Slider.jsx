@@ -1,13 +1,23 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import React, { useState, useEffect } from "react";
+import api from "../API/axiosConfig";
 
 const Slider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const slides = [
-    "https://fakeimg.pl/1900x480?font=noto",
-    "https://fakeimg.pl/1900x480?font=noto",
-    "https://fakeimg.pl/1900x480?font=noto",
-  ];
+  const [slides, setSlides] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await api.get("slider/");
+        setSlides(response.data.map((img) => img.imagen)); 
+      } catch (error) {
+        console.error("Error al cargar las imágenes del slider:", error);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,7 +48,11 @@ const Slider = () => {
       >
         {slides.map((slide, index) => (
           <div className="min-w-full" key={index}>
-            <img className="w-full" src={slide} alt={`Slide ${index + 1}`} />
+            <img
+              className="w-full object-cover h-[480px]"
+              src={slide}
+              alt={`Slide ${index + 1}`}
+            />
           </div>
         ))}
       </div>

@@ -1,11 +1,20 @@
 @import "tailwindcss";
 
 .multiline-truncate {
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Cambia este número a la cantidad de líneas que quieras */
-    line-clamp: 2; /* Propiedad estándar para compatibilidad */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.image-gallery-thumbnail img {
+  width: fit-content;
+  height: 80px !important;
+  object-fit: cover;
+  border-radius: 4px;
+
+}
+

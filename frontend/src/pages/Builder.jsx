@@ -3,7 +3,6 @@ import { useEffect, useState, useContext } from "react";
 import StepSection from "../components/StepSection";
 import api from "../API/axiosConfig";
 import { toast } from "react-toastify";
-import Resume from "../components/Resume";
 import { CartContext } from "../contexts/contexts";
 
 const Builder = () => {
@@ -35,7 +34,6 @@ const Builder = () => {
         const compatRes = await api.get("compatibilidades/");
 
         const allComponents = compRes.data;
-
         const map = {};
         compatRes.data.forEach(({ componente_base, componente_compatible }) => {
           if (!map[componente_base.id]) map[componente_base.id] = new Set();
@@ -100,12 +98,9 @@ const Builder = () => {
               procesadorSeleccionado &&
               compatibilidadMap[procesadorSeleccionado]
             ) {
-              // Verifica si hay al menos una compatibilidad con este tipo de componente
               const tieneCompatDeEsteTipo = compatibles.some((c) =>
                 compatibilidadMap[procesadorSeleccionado].has(c.id)
               );
-
-              // Si sí hay compatibilidades registradas de este tipo, filtramos
               if (tieneCompatDeEsteTipo) {
                 compatibles = compatibles.filter((c) =>
                   compatibilidadMap[procesadorSeleccionado].has(c.id)
@@ -151,14 +146,30 @@ const Builder = () => {
         id: comp.id,
         nombre: comp.nombre,
         cantidad: 1,
+        stock: comp.stock || 0,
       }));
 
-    const total = Object.entries(selected)
-      .filter(([stepId]) => Number(stepId) > 1)
-      .reduce((acc, [, comp]) => acc + (Number(comp.precio) || 0), 0);
+    const sinStock = componentes.find((c) => c.stock <= 0);
+    if (sinStock) {
+      toast.error(
+        `El componente ${sinStock.nombre} no tiene stock disponible.`
+      );
+      return;
+    }
+
+    const total = componentes.reduce(
+      (acc, comp) =>
+        acc +
+        (Number(
+          selected[
+            Object.keys(selected).find((k) => selected[k].id === comp.id)
+          ].precio
+        ) || 0),
+      0
+    );
 
     const computer = {
-      id: Date.now(), // ID temporal
+      id: Date.now(),
       nombre: "PC personalizada",
       descripcion: "Equipo armado por el usuario",
       componentes,
@@ -240,13 +251,22 @@ const Builder = () => {
                     <h3 className="font-semibold text-yellow-300">
                       {comp.marca} {comp.modelo}
                     </h3>
-                    <p>${Number(comp.precio).toLocaleString("es-MX")}</p>
+                    <p>
+                      {Number(comp.precio).toLocaleString("es-MX", {
+                        style: "currency",
+                        currency: "MXN",
+                      })}
+                    </p>
                   </div>
                 </li>
               ))}
           </ul>
           <div className="mt-4 text-xl font-bold text-right">
-            Total: ${totalPrecio.toLocaleString("es-MX")}
+            Total:{" "}
+            {totalPrecio.toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            })}
           </div>
           <div className="flex justify-end mt-6">
             <button
