@@ -16,40 +16,33 @@ const LoginForms = ({ switchToRegister, switchToForgot, closeModal }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onSubmit" });
 
   const onSubmit = async ({ correo, password }) => {
     setError("");
     setIsLoading(true);
-
     try {
-      const response = await api.post("login/", { correo, password });
+      const response = await api.post("login/", {
+        correo: correo.trim(),
+        password,
+      });
       toast.success("Bienvenido");
-
       const { access, refresh, correo: userCorreo, rol, id } = response.data;
-
-      localStorage.setItem("user", JSON.stringify({id: id, correo: userCorreo, rol }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ id, correo: userCorreo, rol })
+      );
       localStorage.setItem("token", access);
       localStorage.setItem("refresh_token", refresh);
-
       window.dispatchEvent(new Event("authChange"));
-
-      if (closeModal) {
-        closeModal();
-      }
+      if (closeModal) closeModal();
       rol.nmRol === "admin" ? navigate("/admin/dashboard") : navigate("/");
     } catch (err) {
-      console.error(
-        "Error al iniciar sesión:",
-        err.response?.data || err.message
-      );
       const errorMessage =
         err.response?.data?.detail ||
         "Credenciales incorrectas. Inténtelo de nuevo.";
       setError(errorMessage);
-      setTimeout(() => {
-        setError("");
-      }, 2000);
+      setTimeout(() => setError(""), 2000);
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +69,12 @@ const LoginForms = ({ switchToRegister, switchToForgot, closeModal }) => {
               placeholder="Correo electrónico"
               {...register("correo", {
                 required: "El correo es obligatorio.",
+                pattern: {
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                  message: "Formato de correo inválido.",
+                },
+                validate: (v) =>
+                  !/<\s*script/i.test(v) ? true : "Entrada no permitida.",
               })}
             />
             {errors.correo && (
@@ -97,6 +96,12 @@ const LoginForms = ({ switchToRegister, switchToForgot, closeModal }) => {
               placeholder="Contraseña"
               {...register("password", {
                 required: "La contraseña es obligatoria.",
+                minLength: {
+                  value: 6,
+                  message: "La contraseña debe tener al menos 6 caracteres.",
+                },
+                validate: (v) =>
+                  !/<\s*script/i.test(v) ? true : "Entrada no permitida.",
               })}
             />
             <button

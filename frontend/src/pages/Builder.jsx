@@ -147,6 +147,7 @@ const Builder = () => {
         nombre: comp.nombre,
         cantidad: 1,
         stock: comp.stock || 0,
+        precio: Number (comp.precio) || Number (comp.price) || 0,
       }));
 
     const sinStock = componentes.find((c) => c.stock <= 0);

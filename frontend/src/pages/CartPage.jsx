@@ -88,9 +88,33 @@ const CartPage = () => {
     }
   };
 
+  // helpers -----------------------------------------------------------------------------
+  const toNumber = (val) => {
+    if (val === undefined || val === null) return 0;
+    if (typeof val === "number") return val;
+    const cleaned = String(val).replace(/[^\d.-]/g, "");
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+  };
+
+  const getPrice = (obj) =>
+    toNumber(
+      obj.precio ??
+        obj.price ??
+        obj.precio_unitario ??
+        obj.unitPrice ??
+        obj.precioUnit ??
+        0
+    );
+
+
+  // generatePDF -------------------------------------------------------------------------
   const generatePDF = (items) => {
     const doc = new jsPDF();
     const date = new Date().toLocaleDateString("es-MX");
+
+    console.log("Estructura real que llega al PDF ⤵️", items);   // ← aquí sí existe
+
 
     doc.setFillColor(30, 30, 30);
     doc.rect(0, 0, 210, 297, "F");
@@ -112,29 +136,47 @@ const CartPage = () => {
             styles: { fontStyle: "bold", textColor: [255, 255, 255] },
           },
           item.quantity,
-          `$${Number(item.precio).toLocaleString("es-MX")}`,
+          "",
         ]);
 
-        item.componentes.forEach((comp) => {
+        let subtotalPc = 0;
+
+        item.componentes.forEach((c) => {
+          const unit = getPrice(c);
+          const qty = c.cantidad || 1;
+          const compTotal = unit * qty;
+          subtotalPc += compTotal;
+
           body.push([
             {
-              content: `- ${comp.nombre}`,
+              content: `  • ${c.nombre}`,
               styles: { textColor: [255, 255, 255] },
             },
-            comp.cantidad,
-            "",
+            qty,
+            `$${compTotal.toLocaleString("es-MX")}`,
           ]);
         });
 
-        body.push(["", "", ""]);
-      } else {
         body.push([
           {
-            content: item.nombre || item.name,
+            content: "Subtotal PC",
+            styles: { fontStyle: "bold", textColor: [255, 204, 0] },
+          },
+          "",
+          `$${subtotalPc.toLocaleString("es-MX")}`,
+        ]);
+
+        body.push(["", "", ""]);
+      } else {
+        const unit = getPrice(item);
+        const lineTotal = unit * item.quantity;
+        body.push([
+          {
+            content: item.nombre ?? item.name,
             styles: { textColor: [255, 255, 255] },
           },
           item.quantity,
-          `$${Number(item.price).toLocaleString("es-MX")}`,
+          `$${lineTotal.toLocaleString("es-MX")}`,
         ]);
       }
     });
@@ -153,9 +195,9 @@ const CartPage = () => {
       styles: {
         fontSize: 10,
         textColor: [255, 255, 255],
+        fillColor: [45, 45, 45],
         halign: "left",
         valign: "middle",
-        fillColor: [45, 45, 45],
       },
       headStyles: {
         fillColor: [255, 204, 0],
