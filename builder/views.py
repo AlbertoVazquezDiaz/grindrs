@@ -234,3 +234,8 @@ class VentaTotalView(APIView):
     def get(self, request):
         total_ventas = Venta.objects.aggregate(total=Sum('total'))['total'] or 0
         return Response({'total_ventas': total_ventas}, status=status.HTTP_200_OK)
+
+class FotoSliderViewSet(viewsets.ModelViewSet):
+    queryset = FotoSlider.objects.all()
+    serializer_class = FotoSliderSerializer
+    render_classes = [JSONRenderer]

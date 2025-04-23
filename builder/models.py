@@ -88,3 +88,6 @@ class DetalleVenta(models.Model):
     componente = models.ForeignKey(Componente, on_delete=models.CASCADE, null=True, blank=True)
     cantidad = models.IntegerField(default=1, null=False)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+
+class FotoSlider (models.Model):
+    imagen = models.TextField(null=False)

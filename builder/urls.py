@@ -8,6 +8,7 @@ router.register(r'rol',RolViewSet)
 router.register(r'usuario',UsuarioViewSet)
 router.register(r'tipoComponente',TipoComponenteViewSet)
 router.register(r'componente',ComponenteViewSet)
+router.register(r'slider',FotoSliderViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
