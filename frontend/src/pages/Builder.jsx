@@ -218,7 +218,7 @@ const Builder = () => {
         ))
       )}
 
-      {Object.keys(selected).length >= steps.length && (
+      {!isLoading && Object.keys(selected).length >= steps.length && (
         <div className="bg-gray-800 p-6 mt-8 rounded-lg text-white">
           <h2 className="text-lg font-semibold text-yellow-400 mb-4">
             Resumen
