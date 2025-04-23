@@ -6,8 +6,8 @@ const MainLayout = () => {
   return (
     <>
       <Menu />
-      <div className="w-screen overflow-x-hidden min-h-screen bg-black">
-        <Outlet /> {/* Renderiza la página actual */}
+      <div className="w-full overflow-x-hidden min-h-screen bg-black">
+        <Outlet /> 
       </div>
       <Footer />
     </>
